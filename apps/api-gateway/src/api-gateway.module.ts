@@ -4,9 +4,23 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SERVICES, DEFAULT_PORTS } from '@app/common';
 import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
 
 @Module({
   imports: [
+    WinstonModule.forRoot({
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+      ),
+      // TODO: configurable log info by NODE_ENV or something
+      transports: [
+        new winston.transports.Console({
+          level: 'debug',
+        }),
+      ],
+    }),
     ConfigModule.forRoot({ isGlobal: true }),
     ClientsModule.registerAsync([
       {
@@ -62,4 +76,4 @@ import { ApiGatewayService } from './api-gateway.service';
   controllers: [ApiGatewayController],
   providers: [ApiGatewayService],
 })
-export class ApiGatewayModule {}
+export class ApiGatewayModule { }
