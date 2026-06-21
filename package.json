@@ -1,7 +1,7 @@
 {
-  "name": "dexa",
+  "name": "dexa-core",
   "version": "0.0.1",
-  "description": "",
+  "description": "Dexa Core API for Dexa Web",
   "author": "@saddansyah",
   "private": true,
   "license": "UNLICENSED",
