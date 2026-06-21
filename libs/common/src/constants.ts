@@ -19,6 +19,9 @@ export const COMMANDS = {
   },
   FILE: {
     TEST: 'test-file',
+    UPLOAD: 'upload-file',
+    DELETE: 'delete-file',
+    GET_PRESIGNED_URL: 'get-presigned-url',
   },
   ATTENDANCE: {
     TEST: 'test-attendance',
