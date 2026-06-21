@@ -1,0 +1,24 @@
+import 'dotenv/config';
+import { NestFactory } from '@nestjs/core';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
+import { DEFAULT_PORTS } from '@app/common';
+import { FileSvcModule } from './file-svc.module';
+
+async function bootstrap() {
+  const host = process.env.FILE_HOST ?? '127.0.0.1';
+  const port = process.env.FILE_PORT ? parseInt(process.env.FILE_PORT, 10) : DEFAULT_PORTS.FILE;
+
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    FileSvcModule,
+    {
+      transport: Transport.TCP,
+      options: {
+        host,
+        port,
+      },
+    },
+  );
+  await app.listen();
+  console.log(`File Microservice is listening on host ${host} port ${port}...`);
+}
+bootstrap();
