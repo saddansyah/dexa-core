@@ -27,7 +27,6 @@ CREATE TABLE `employees` (
 	`name` varchar(255),
 	`address` varchar(255),
 	`dob` date NOT NULL,
-	`gender` varchar(255),
 	`position` varchar(255),
 	`join_date` date NOT NULL,
 	`resign_date` date,
@@ -38,8 +37,8 @@ CREATE TABLE `employees` (
 );
 --> statement-breakpoint
 CREATE TABLE `roles` (
-	`id` serial AUTO_INCREMENT NOT NULL,
-	`name` varchar(100),
+	`id` varchar(50) NOT NULL,
+	`name` varchar(100) NOT NULL,
 	`created_at` timestamp DEFAULT (now()),
 	`updated_at` timestamp DEFAULT (now()),
 	CONSTRAINT `roles_id` PRIMARY KEY(`id`)
@@ -47,7 +46,7 @@ CREATE TABLE `roles` (
 --> statement-breakpoint
 CREATE TABLE `users` (
 	`id` varchar(36) NOT NULL,
-	`role_id` bigint unsigned,
+	`role_id` varchar(50),
 	`email` varchar(255) NOT NULL,
 	`password` varchar(255) NOT NULL,
 	`created_at` timestamp DEFAULT (now()),

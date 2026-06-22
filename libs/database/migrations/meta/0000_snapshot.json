@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "00cfc5d2-5e64-4e25-bc1a-9ff15638823e",
+  "id": "37cd14ec-949f-45ad-9772-a89848285715",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "attendances": {
@@ -200,13 +200,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "gender": {
-          "name": "gender",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "position": {
           "name": "position",
           "type": "varchar(255)",
@@ -297,16 +290,16 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "name": {
           "name": "name",
           "type": "varchar(100)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "created_at": {
@@ -351,7 +344,7 @@
         },
         "role_id": {
           "name": "role_id",
-          "type": "bigint unsigned",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

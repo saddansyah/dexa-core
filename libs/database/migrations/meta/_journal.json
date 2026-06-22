@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1782117948764,
+      "when": 1782142844523,
       "tag": "0000_init_schema",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1782118440249,
-      "tag": "0001_remove_gender",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1782142306596,
-      "tag": "0002_change_role_id_to_slug",
       "breakpoints": true
     }
   ]
