@@ -28,7 +28,6 @@ export class EmployeeSvcService {
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-    // 1. Query total count
     let countQuery = this.db
       .select({ value: count() })
       .from(employees)
@@ -41,7 +40,6 @@ export class EmployeeSvcService {
     const [countResult] = await countQuery;
     const total = countResult?.value ?? 0;
 
-    // 2. Query paginated list
     let listQuery = this.db
       .select({
         id: employees.id,
