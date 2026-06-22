@@ -4,7 +4,7 @@ import { Roles } from '../decorators/roles.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) { }
 
   canActivate(context: ExecutionContext): boolean {
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(Roles, [
@@ -16,9 +16,9 @@ export class RolesGuard implements CanActivate {
     }
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    if (!user || !user.role) {
+    if (!user || !user.roleId) {
       return false;
     }
-    return requiredRoles.some((role) => user.role.toLowerCase() === role.toLowerCase());
+    return requiredRoles.some((role) => user.roleId === role);
   }
 }
