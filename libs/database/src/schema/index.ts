@@ -2,8 +2,8 @@ import { mysqlTable, int, bigint, varchar, timestamp, date, mysqlEnum, serial, p
 import { v7 as uuidv7 } from 'uuid';
 
 export const roles = mysqlTable('roles', {
-  id: serial('id').primaryKey(),
-  name: varchar('name', { length: 100 }),
+  id: varchar('id', { length: 50 }).primaryKey(),
+  name: varchar('name', { length: 100 }).notNull(),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });
@@ -33,7 +33,7 @@ export const employees = mysqlTable('employees', {
 
 export const users = mysqlTable('users', {
   id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
-  roleId: bigint('role_id', { mode: 'number', unsigned: true }).references(() => roles.id, { onDelete: 'restrict' }),
+  roleId: varchar('role_id', { length: 50 }).references(() => roles.id, { onDelete: 'restrict' }),
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
   createdAt: timestamp('created_at').defaultNow(),

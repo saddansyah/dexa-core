@@ -28,15 +28,15 @@ async function main() {
 
   console.log('Seeding Roles...');
   await db.insert(roles).values([
-    { name: 'Admin' },
-    { name: 'HR' },
-    { name: 'Employee' }
+    { id: 'admin', name: 'Admin' },
+    { id: 'hr', name: 'HR' },
+    { id: 'employee', name: 'Employee' }
   ]);
 
   const allRoles = await db.select().from(roles);
-  const adminRole = allRoles.find(r => r.name === 'Admin')!;
-  const hrRole = allRoles.find(r => r.name === 'HR')!;
-  const employeeRole = allRoles.find(r => r.name === 'Employee')!;
+  const adminRole = allRoles.find(r => r.id === 'admin')!;
+  const hrRole = allRoles.find(r => r.id === 'hr')!;
+  const employeeRole = allRoles.find(r => r.id === 'employee')!;
 
   console.log('Seeding Departments...');
   await db.insert(departments).values([

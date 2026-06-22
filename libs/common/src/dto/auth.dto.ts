@@ -13,7 +13,7 @@ export const RegisterSchema = z.object({
     password: z.string().min(6, "Password must be at least 6 characters"),
     name: z.string().min(1, "Name is required"),
     dob: z.string().transform(val => new Date(val)),
-    roleId: z.number(),
+    roleId: z.string(),
     departmentId: z.number().optional(),
     address: z.string().optional(),
     position: z.string().optional(),
