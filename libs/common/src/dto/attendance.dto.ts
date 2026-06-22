@@ -1,0 +1,42 @@
+import { z } from "zod";
+import { createZodDto } from "nestjs-zod";
+
+export const CreateAttendanceSchema = z.object({
+  employeeId: z.uuidv7().optional().describe("Unique ID of the employee (defaults to current user if not admin)"),
+  attendanceDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Format must be YYYY-MM-DD").optional().describe("Attendance date (defaults to today)"),
+  clockInTime: z.iso.datetime().optional().describe("Clock-in time (ISO format)"),
+  clockInPhoto: z.url().or(z.string().min(1)).optional().describe("URL/reference to clock-in photo"),
+  clockOutTime: z.iso.datetime().optional().describe("Clock-out time (ISO format)"),
+  clockOutPhoto: z.url().or(z.string().min(1)).optional().describe("URL/reference to clock-out photo"),
+  status: z.enum(["present", "late", "absent", "incomplete"]).optional().describe("Attendance status"),
+});
+
+export class CreateAttendanceDto extends createZodDto(CreateAttendanceSchema) { }
+
+export const UpdateAttendanceSchema = z.object({
+  clockInTime: z.iso.datetime().optional().describe("Clock-in time (ISO format)"),
+  clockInPhoto: z.url().or(z.string().min(1)).optional().describe("URL/reference to clock-in photo"),
+  clockOutTime: z.iso.datetime().optional().describe("Clock-out time (ISO format)"),
+  clockOutPhoto: z.url().or(z.string().min(1)).optional().describe("URL/reference to clock-out photo"),
+  status: z.enum(["present", "late", "absent", "incomplete"]).optional().describe("Attendance status"),
+});
+
+export class UpdateAttendanceDto extends createZodDto(UpdateAttendanceSchema) { }
+
+export const GetAttendancesSchema = z.object({
+  employeeId: z.uuidv7().optional().describe("Filter by employee ID"),
+  startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Format must be YYYY-MM-DD").optional().describe("Start date filter (YYYY-MM-DD)"),
+  endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Format must be YYYY-MM-DD").optional().describe("End date filter (YYYY-MM-DD)"),
+  status: z.enum(["present", "late", "absent", "incomplete"]).optional().describe("Filter by status"),
+  limit: z.coerce.number().min(1).max(100).optional().default(10).describe("Max records to return per page"),
+  page: z.coerce.number().min(1).optional().default(1).describe("Page number (1-indexed)"),
+});
+
+export class GetAttendancesDto extends createZodDto(GetAttendancesSchema) { }
+
+export const GetAttendanceByIdSchema = z.object({
+  employeeId: z.uuidv7().describe("Unique ID of the employee"),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Format must be YYYY-MM-DD").describe("Attendance date (YYYY-MM-DD)"),
+});
+
+export class GetAttendanceByIdDto extends createZodDto(GetAttendanceByIdSchema) { }

@@ -8,9 +8,11 @@ export * from './filters/microservice-exception.filter';
 export * from './dto/file.dto';
 export * from './dto/employee.dto';
 export * from './dto/auth.dto';
+export * from './dto/attendance.dto';
 export * from './guards/auth.guard';
 export * from './decorators/user.decorator';
 export * from './bcrypt';
 export * from './dto/role.dto';
 export * from './decorators/roles.decorator';
 export * from './guards/roles.guard';
+
