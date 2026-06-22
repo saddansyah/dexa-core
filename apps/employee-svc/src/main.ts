@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
-import { DEFAULT_PORTS, ResponseInterceptor, RpcExceptionFilter } from '@app/common';
+import { DEFAULT_PORTS, ResponseInterceptor, MicroserviceExceptionFilter } from '@app/common';
 import { EmployeeSvcModule } from './employee-svc.module';
 import { ConsoleLogger } from '@nestjs/common';
 
@@ -25,7 +25,7 @@ async function bootstrap() {
     },
   );
 
-  app.useGlobalFilters(new RpcExceptionFilter());
+  app.useGlobalFilters(new MicroserviceExceptionFilter());
 
   await app.listen();
 

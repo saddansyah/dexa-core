@@ -34,7 +34,7 @@ export class EmployeeSvcService {
       .where(eq(users.id, id));
 
     if (!result[0]) {
-      throw new RpcException(`Employee not found with ID: ${id}`)
+      throw new NotFoundException(`Employee not found with ID: ${id}`)
     }
 
     return result[0] || null;

@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
-import { DEFAULT_PORTS, RpcExceptionFilter } from '@app/common';
+import { DEFAULT_PORTS, MicroserviceExceptionFilter } from '@app/common';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { FileSvcModule } from './file-svc.module';
 
@@ -21,7 +21,7 @@ async function bootstrap() {
   );
 
   app.useGlobalPipes(new ZodValidationPipe());
-  app.useGlobalFilters(new RpcExceptionFilter());
+  app.useGlobalFilters(new MicroserviceExceptionFilter());
 
   await app.listen();
   console.log(`File Microservice is listening on host ${host} port ${port}...`);

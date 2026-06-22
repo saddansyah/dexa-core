@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ZodValidationPipe, cleanupOpenApiDoc } from 'nestjs-zod';
-import { DEFAULT_PORTS, HttpExceptionFilter, RpcExceptionFilter, ZodExceptionFilter, ResponseInterceptor } from '@app/common';
+import { DEFAULT_PORTS, HttpExceptionFilter, ResponseInterceptor } from '@app/common';
 import { ApiGatewayModule } from './api-gateway.module';
 import { ConsoleLogger } from '@nestjs/common';
 
@@ -19,8 +19,8 @@ async function bootstrap() {
 
   app.enableCors();
   app.useGlobalPipes(new ZodValidationPipe());
-  app.useGlobalFilters(new HttpExceptionFilter(), new RpcExceptionFilter(), new ZodExceptionFilter());
   app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   const config = new DocumentBuilder()
     .setTitle('Dexa Core API')
