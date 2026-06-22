@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { SERVICES, COMMANDS, LoginDto, RegisterDto, CreateRoleDto, UpdateRoleDto, GetRoleByIdDto, AuthGuard, RolesGuard, Roles } from '@app/common';
+import { SERVICES, COMMANDS, LoginDto, RegisterDto, CreateRoleDto, UpdateRoleDto, GetRoleByIdDto, AuthGuard, RolesGuard, Roles, RefreshTokenDto } from '@app/common';
 
 @Controller('auth')
 export class AuthController {
@@ -18,6 +18,18 @@ export class AuthController {
   @Post('login')
   login(@Body() data: LoginDto) {
     return this.authClient.send({ cmd: COMMANDS.AUTH.LOGIN }, data);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh')
+  refresh(@Body() data: RefreshTokenDto) {
+    return this.authClient.send({ cmd: COMMANDS.AUTH.REFRESH_TOKEN }, data);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('logout')
+  logout(@Body() data: RefreshTokenDto) {
+    return this.authClient.send({ cmd: COMMANDS.AUTH.LOGOUT }, data);
   }
 
   @Post('roles')

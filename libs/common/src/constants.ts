@@ -25,6 +25,8 @@ export const COMMANDS = {
     GET_ROLE_BY_ID: 'get-role-by-id',
     UPDATE_ROLE: 'update-role',
     DELETE_ROLE: 'delete-role',
+    REFRESH_TOKEN: 'refresh-token',
+    LOGOUT: 'logout',
   },
   FILE: {
     UPLOAD: 'upload-file',

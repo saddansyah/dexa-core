@@ -5,9 +5,9 @@ export const CreateAttendanceSchema = z.object({
   employeeId: z.uuidv7().optional().describe("Unique ID of the employee (defaults to current user if not admin)"),
   attendanceDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Format must be YYYY-MM-DD").optional().describe("Attendance date (defaults to today)"),
   clockInTime: z.iso.datetime().optional().describe("Clock-in time (ISO format)"),
-  clockInPhoto: z.url().or(z.string().min(1)).optional().describe("URL/reference to clock-in photo"),
+  clockInPhoto: z.url().optional().describe("URL/reference to clock-in photo"),
   clockOutTime: z.iso.datetime().optional().describe("Clock-out time (ISO format)"),
-  clockOutPhoto: z.url().or(z.string().min(1)).optional().describe("URL/reference to clock-out photo"),
+  clockOutPhoto: z.url().optional().describe("URL/reference to clock-out photo"),
   status: z.enum(["present", "late", "absent", "incomplete"]).optional().describe("Attendance status"),
 });
 
@@ -15,9 +15,9 @@ export class CreateAttendanceDto extends createZodDto(CreateAttendanceSchema) { 
 
 export const UpdateAttendanceSchema = z.object({
   clockInTime: z.iso.datetime().optional().describe("Clock-in time (ISO format)"),
-  clockInPhoto: z.url().or(z.string().min(1)).optional().describe("URL/reference to clock-in photo"),
+  clockInPhoto: z.url().optional().describe("URL/reference to clock-in photo"),
   clockOutTime: z.iso.datetime().optional().describe("Clock-out time (ISO format)"),
-  clockOutPhoto: z.url().or(z.string().min(1)).optional().describe("URL/reference to clock-out photo"),
+  clockOutPhoto: z.url().optional().describe("URL/reference to clock-out photo"),
   status: z.enum(["present", "late", "absent", "incomplete"]).optional().describe("Attendance status"),
 });
 

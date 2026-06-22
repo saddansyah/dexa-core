@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 export const UploadFileSchema = z.object({
   key: z.string().optional().describe('The filename or unique storage key in S3'),
+  folder: z.string().optional().describe('Optional subfolder in S3 (e.g., "attendance", "avatar")'),
 });
 
 export class UploadFileDto extends createZodDto(UploadFileSchema) { }

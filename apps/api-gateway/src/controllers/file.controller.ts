@@ -8,6 +8,9 @@ import {
   UploadedFile,
   Body,
   Query,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -19,6 +22,8 @@ import {
   DeleteFileDto,
   GetPresignedUrlDto,
 } from '@app/common';
+import { v7 as uuidv7 } from 'uuid';
+import * as path from 'path';
 
 @ApiTags('File')
 @Controller('file')
@@ -43,18 +48,39 @@ export class FileController {
           type: 'string',
           description: 'Optional file key (defaults to original filename if empty)',
         },
+        folder: {
+          type: 'string',
+          description: 'Optional subfolder in S3 (e.g., "attendance", "avatar")',
+        },
       },
     },
   })
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5 MB
+          new FileTypeValidator({ fileType: /(image\/jpeg|image\/png|image\/webp|image\/gif|application\/pdf)/ }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
     @Body() body: UploadFileDto,
   ) {
+    const ext = path.extname(file.originalname);
+    const cleanName = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9.-]/g, '_');
+
+    let fileKey = body.key;
+    if (!fileKey) {
+      const folderPrefix = body.folder ? `${body.folder.replace(/\/$/, '')}/` : '';
+      fileKey = `${folderPrefix}${uuidv7()}-${cleanName}${ext}`;
+    }
+
     return this.fileClient.send(
       { cmd: COMMANDS.FILE.UPLOAD },
       {
-        key: body.key || file.originalname,
+        key: fileKey,
         file: {
           type: 'Buffer',
           data: Array.from(file.buffer as Buffer),

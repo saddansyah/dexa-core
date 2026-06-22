@@ -40,6 +40,14 @@ export const users = mysqlTable('users', {
   updatedAt: timestamp('updated_at').defaultNow(),
 });
 
+export const refreshTokens = mysqlTable('refresh_tokens', {
+  id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
+  userId: varchar('user_id', { length: 36 }).references(() => users.id, { onDelete: 'cascade' }),
+  token: varchar('token', { length: 500 }).notNull().unique(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
 export const attendances = mysqlTable('attendances', {
   employeeId: varchar('employee_id', { length: 36 }).references(() => employees.id, { onDelete: 'restrict' }),
   attendanceDate: date('attendance_date').notNull(),

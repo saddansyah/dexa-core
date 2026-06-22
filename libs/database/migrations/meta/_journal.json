@@ -8,6 +8,13 @@
       "when": 1782142844523,
       "tag": "0000_init_schema",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1782146098923,
+      "tag": "0001_loving_ikaris",
+      "breakpoints": true
     }
   ]
 }
