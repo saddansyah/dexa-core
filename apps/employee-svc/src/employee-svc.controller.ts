@@ -1,20 +1,29 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { COMMANDS } from '@app/common';
+import { COMMANDS, GetEmployeeByEmailDto, GetEmployeeByIdDto } from '@app/common';
 import { EmployeeSvcService } from './employee-svc.service';
 
 @Controller()
 export class EmployeeSvcController {
-  constructor(private readonly employeeSvcService: EmployeeSvcService) {}
+  private readonly logger = new Logger(EmployeeSvcController.name);
 
-  @MessagePattern({ cmd: COMMANDS.EMPLOYEE.TEST })
-  handleTestEmployee(@Payload() data: { message: string }) {
-    console.log('Received employee test message:', data);
+  constructor(private readonly employeeSvcService: EmployeeSvcService) { }
+
+  @MessagePattern({ cmd: COMMANDS.EMPLOYEE.GET_BY_EMAIL })
+  async handleGetEmployeeByEmail(@Payload() data: GetEmployeeByEmailDto) {
+    this.logger.log(`Received get employee by email message: ${JSON.stringify(data)}`);
+    const employee = await this.employeeSvcService.getByEmail(data.email);
     return {
-      success: true,
-      service: 'employee-svc',
-      receivedMessage: data.message,
-      timestamp: new Date().toISOString(),
+      data: employee,
+    };
+  }
+
+  @MessagePattern({ cmd: COMMANDS.EMPLOYEE.GET_BY_ID })
+  async handleGetEmployeeById(@Payload() data: GetEmployeeByIdDto) {
+    this.logger.log(`Received get employee by id message: ${JSON.stringify(data)}`);
+    const employee = await this.employeeSvcService.getById(data.id);
+    return {
+      data: employee,
     };
   }
 }

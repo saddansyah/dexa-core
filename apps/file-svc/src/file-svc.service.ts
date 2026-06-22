@@ -10,7 +10,7 @@ export class FileSvcService implements OnModuleInit {
   private publicUrl?: string;
   private endpoint: string;
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) { }
 
   onModuleInit() {
     this.endpoint = this.configService.get<string>('STORAGE_ENDPOINT') || 'http://127.0.0.1:9000';

@@ -25,7 +25,7 @@ import {
 export class FileController {
   constructor(
     @Inject(SERVICES.FILE) private readonly fileClient: ClientProxy,
-  ) {}
+  ) { }
 
   @Post('upload')
   @ApiOperation({ summary: 'Upload file to S3' })

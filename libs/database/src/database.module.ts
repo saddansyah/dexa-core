@@ -6,7 +6,6 @@ import * as schema from './schema';
 
 export const DRIZZLE_MODULE_PROVIDER = 'drizzle';
 
-@Global() // To inject in each services without specifying imports: [DatabaseModule]
 @Module({
   providers: [
     {

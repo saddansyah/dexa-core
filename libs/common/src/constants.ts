@@ -19,6 +19,7 @@ export const DEFAULT = {
 export const COMMANDS = {
   AUTH: {
     TEST: 'test-auth',
+    LOGIN: 'login',
   },
   FILE: {
     UPLOAD: 'upload-file',
@@ -26,10 +27,19 @@ export const COMMANDS = {
     GET_PRESIGNED_URL: 'get-presigned-url',
   },
   ATTENDANCE: {
-    TEST: 'test-attendance',
+    GET_ALL: 'get-attendances',
+    GET_BY_ID: 'get-attendance-by-id',
+    CREATE: 'create-attendance',
+    UPDATE: 'update-attendance',
+    DELETE: 'delete-attendance',
   },
   EMPLOYEE: {
-    TEST: 'test-employee',
+    GET_ALL: 'get-employees',
+    GET_BY_ID: 'get-employee-by-id',
+    GET_BY_EMAIL: 'get-employee-by-email',
+    CREATE: 'create-employee',
+    UPDATE: 'update-employee',
+    DELETE: 'delete-employee'
   },
 } as const;
 

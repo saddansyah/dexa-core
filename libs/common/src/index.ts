@@ -4,4 +4,6 @@ export * from './constants';
 export * from './interceptors/response.interceptor';
 export * from './filters/zod-exception.filter';
 export * from './filters/http-exception.filter';
+export * from './filters/rpc-exception.filter';
 export * from './dto/file.dto';
+export * from './dto/employee.dto';

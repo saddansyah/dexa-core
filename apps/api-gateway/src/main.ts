@@ -3,21 +3,24 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ZodValidationPipe, cleanupOpenApiDoc } from 'nestjs-zod';
-import { DEFAULT_PORTS, HttpExceptionFilter, ZodExceptionFilter } from '@app/common';
+import { DEFAULT_PORTS, HttpExceptionFilter, RpcExceptionFilter, ZodExceptionFilter, ResponseInterceptor } from '@app/common';
 import { ApiGatewayModule } from './api-gateway.module';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ConsoleLogger } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ApiGatewayModule);
+  const logger = new ConsoleLogger({
+    json: true,
+  });
+
+  const app = await NestFactory.create(ApiGatewayModule, { logger });
 
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || DEFAULT_PORTS.GATEWAY;
-  const winstonService = app.get(WINSTON_MODULE_NEST_PROVIDER);
 
-  app.useLogger(winstonService);
   app.enableCors();
   app.useGlobalPipes(new ZodValidationPipe());
-  app.useGlobalFilters(new HttpExceptionFilter(), new ZodExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(), new RpcExceptionFilter(), new ZodExceptionFilter());
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   const config = new DocumentBuilder()
     .setTitle('Dexa Core API')
@@ -28,6 +31,6 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, cleanupOpenApiDoc(document));
 
   await app.listen(port);
-  winstonService.log(`API Gateway is listening on port ${port}`);
+  logger.log(`API Gateway is listening on port ${port}`);
 }
 bootstrap();

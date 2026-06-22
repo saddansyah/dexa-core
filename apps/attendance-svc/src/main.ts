@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
-import { DEFAULT_PORTS } from '@app/common';
+import { DEFAULT_PORTS, RpcExceptionFilter } from '@app/common';
 import { AttendanceSvcModule } from './attendance-svc.module';
 
 async function bootstrap() {
@@ -18,6 +18,7 @@ async function bootstrap() {
       },
     },
   );
+  app.useGlobalFilters(new RpcExceptionFilter());
   await app.listen();
   console.log(`Attendance Microservice is listening on host ${host} port ${port}...`);
 }

@@ -85,7 +85,7 @@ async function main() {
   await db.insert(users).values({
     id: emp1UserId,
     roleId: employeeRole.id,
-    email: 'saddan@dexa.com',
+    email: 'kazhim@dexa.com',
     password: hashedPassword,
   });
   await db.insert(employees).values({
@@ -105,7 +105,7 @@ async function main() {
   await db.insert(users).values({
     id: emp2UserId,
     roleId: employeeRole.id,
-    email: 'jane.smith@dexa.com',
+    email: 'saddan@dexa.com',
     password: hashedPassword,
   });
   await db.insert(employees).values({
