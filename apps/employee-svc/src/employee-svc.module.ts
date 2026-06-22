@@ -11,5 +11,6 @@ import { EmployeeSvcService } from './employee-svc.service';
   ],
   controllers: [EmployeeSvcController],
   providers: [EmployeeSvcService],
+  exports: [EmployeeSvcService]
 })
 export class EmployeeSvcModule { }

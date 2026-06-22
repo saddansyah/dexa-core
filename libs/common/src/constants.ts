@@ -18,8 +18,8 @@ export const DEFAULT = {
 
 export const COMMANDS = {
   AUTH: {
-    TEST: 'test-auth',
     LOGIN: 'login',
+    REGISTER: 'register',
   },
   FILE: {
     UPLOAD: 'upload-file',

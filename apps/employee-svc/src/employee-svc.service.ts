@@ -3,7 +3,6 @@ import { DRIZZLE_MODULE_PROVIDER, employees, users } from '@app/database';
 import { MySql2Database } from 'drizzle-orm/mysql2';
 import * as dbSchema from '@app/database';
 import { eq } from 'drizzle-orm';
-import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class EmployeeSvcService {
@@ -33,11 +32,9 @@ export class EmployeeSvcService {
       .innerJoin(users, eq(employees.userId, users.id))
       .where(eq(users.id, id));
 
-    if (!result[0]) {
-      throw new NotFoundException(`Employee not found with ID: ${id}`)
-    }
+    if (!result[0]) throw new NotFoundException('Employee not found');
 
-    return result[0] || null;
+    return result[0]
   }
 
   async getByEmail(email: string) {
@@ -62,14 +59,8 @@ export class EmployeeSvcService {
       .innerJoin(users, eq(employees.userId, users.id))
       .where(eq(users.email, email));
 
-    if (!result[0]) {
-      throw new NotFoundException(`Employee not found with email: ${email}`)
-    }
+    if (!result[0]) throw new NotFoundException('Employee not found');
 
-    return result[0] || null;
-  }
-
-  getHello(): string {
-    return 'Hello World!';
+    return result[0]
   }
 }

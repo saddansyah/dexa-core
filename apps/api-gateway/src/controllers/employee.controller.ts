@@ -1,12 +1,18 @@
-import { Controller, Get, Inject, Param } from '@nestjs/common';
+import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { SERVICES, COMMANDS, GetEmployeeByEmailDto, GetEmployeeByIdDto } from '@app/common';
+import { SERVICES, COMMANDS, GetEmployeeByEmailDto, GetEmployeeByIdDto, AuthGuard, CurrentUser } from '@app/common';
 
 @Controller('employee')
+@UseGuards(AuthGuard)
 export class EmployeeController {
   constructor(
     @Inject(SERVICES.EMPLOYEE) private readonly employeeClient: ClientProxy,
   ) { }
+
+  @Get('me')
+  getMe(@CurrentUser() user: any) {
+    return user;
+  }
 
   @Get(':id')
   getEmployeeById(@Param() params: GetEmployeeByIdDto) {

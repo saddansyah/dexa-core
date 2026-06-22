@@ -7,3 +7,7 @@ export * from './filters/http-exception.filter';
 export * from './filters/microservice-exception.filter';
 export * from './dto/file.dto';
 export * from './dto/employee.dto';
+export * from './dto/auth.dto';
+export * from './guards/auth.guard';
+export * from './decorators/user.decorator';
+export * from './bcrypt';

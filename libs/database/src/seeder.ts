@@ -1,9 +1,9 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/mysql2';
 import * as mysql from 'mysql2/promise';
-import * as bcrypt from 'bcrypt';
 import { v7 as uuidv7 } from 'uuid';
 import { roles, departments, users, employees, attendances } from './schema';
+import { hashPassword } from '@app/common';
 
 async function main() {
   const connectionString = process.env.DATABASE_URL;
@@ -50,7 +50,7 @@ async function main() {
   const hrDept = allDepartments.find(d => d.name === 'Human Resources')!;
 
   console.log('Seeding Users & Employees...');
-  const hashedPassword = await bcrypt.hash('password123', 10);
+  const hashedPassword = await hashPassword('password123');
 
   const adminUserId = uuidv7();
   await db.insert(users).values({

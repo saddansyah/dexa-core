@@ -1,9 +1,10 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
-import { DEFAULT_PORTS, ResponseInterceptor, MicroserviceExceptionFilter } from '@app/common';
+import { DEFAULT_PORTS, MicroserviceExceptionFilter } from '@app/common';
 import { EmployeeSvcModule } from './employee-svc.module';
 import { ConsoleLogger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const host = process.env.EMPLOYEE_HOST ?? '127.0.0.1';
@@ -25,10 +26,9 @@ async function bootstrap() {
     },
   );
 
+  const configService = app.get(ConfigService);
   app.useGlobalFilters(new MicroserviceExceptionFilter());
-
   await app.listen();
-
   logger.log(`Employee Microservice is listening on host ${host} port ${port}...`);
 }
 bootstrap();
