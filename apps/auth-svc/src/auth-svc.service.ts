@@ -1,6 +1,6 @@
-import { Inject, Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, ConflictException, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { DRIZZLE_MODULE_PROVIDER, users, employees } from '@app/database';
+import { DRIZZLE_MODULE_PROVIDER, users, employees, roles } from '@app/database';
 import { MySql2Database } from 'drizzle-orm/mysql2';
 import * as dbSchema from '@app/database';
 import { eq } from 'drizzle-orm';
@@ -91,6 +91,7 @@ export class AuthSvcService {
       sub: user.id,
       email: user.email,
       roleId: user.roleId,
+      role: user.roleId,
       employeeId: employee?.id,
       name: employee?.name,
     };
@@ -100,5 +101,44 @@ export class AuthSvcService {
     return {
       access_token: token,
     };
+  }
+
+  async createRole(id: string, name: string) {
+    const existing = await this.db.select().from(roles).where(eq(roles.id, id)).limit(1);
+    if (existing[0]) {
+      throw new ConflictException('Role slug already exists');
+    }
+    await this.db.insert(roles).values({ id, name });
+    return { id, name };
+  }
+
+  async getRoles() {
+    return this.db.select().from(roles);
+  }
+
+  async getRoleById(id: string) {
+    const roleResult = await this.db.select().from(roles).where(eq(roles.id, id)).limit(1);
+    if (!roleResult[0]) {
+      throw new NotFoundException('Role not found');
+    }
+    return roleResult[0];
+  }
+
+  async updateRole(id: string, name: string) {
+    const roleResult = await this.db.select().from(roles).where(eq(roles.id, id)).limit(1);
+    if (!roleResult[0]) {
+      throw new NotFoundException('Role not found');
+    }
+    await this.db.update(roles).set({ name }).where(eq(roles.id, id));
+    return { id, name };
+  }
+
+  async deleteRole(id: string) {
+    const roleResult = await this.db.select().from(roles).where(eq(roles.id, id)).limit(1);
+    if (!roleResult[0]) {
+      throw new NotFoundException('Role not found');
+    }
+    await this.db.delete(roles).where(eq(roles.id, id));
+    return { success: true };
   }
 }

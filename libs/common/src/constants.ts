@@ -20,6 +20,11 @@ export const COMMANDS = {
   AUTH: {
     LOGIN: 'login',
     REGISTER: 'register',
+    CREATE_ROLE: 'create-role',
+    GET_ROLES: 'get-roles',
+    GET_ROLE_BY_ID: 'get-role-by-id',
+    UPDATE_ROLE: 'update-role',
+    DELETE_ROLE: 'delete-role',
   },
   FILE: {
     UPLOAD: 'upload-file',
