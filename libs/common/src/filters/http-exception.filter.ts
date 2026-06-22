@@ -8,7 +8,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   catch(exception: any, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse<Response>();
-    console.log(exception)
     const formatted = formatException(exception);
 
     this.logger.error({

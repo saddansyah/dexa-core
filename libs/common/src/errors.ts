@@ -2,14 +2,9 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { ZodValidationException } from 'nestjs-zod';
 import { ZodError } from 'zod';
+import { ErrorResponseDto } from './dto/errors.dto';
 
-export interface CoreErrorResponse {
-    status: number;
-    message: string;
-    error: any;
-}
-
-export function formatException(exception: any): CoreErrorResponse {
+export function formatException(exception: any): ErrorResponseDto {
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal Server Error';
     let errorDetails: any = null;
