@@ -10,5 +10,5 @@ import { FileSvcService } from './file-svc.service';
   controllers: [FileSvcController],
   providers: [FileSvcService],
 })
-export class FileSvcModule {}
+export class FileSvcModule { }
 

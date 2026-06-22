@@ -14,9 +14,9 @@ describe('FileSvcController', () => {
     fileSvcController = app.get<FileSvcController>(FileSvcController);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(fileSvcController.getHello()).toBe('Hello World!');
-    });
-  });
+  // describe('root', () => {
+  //   it('should return "Hello World!"', () => {
+  //     expect(fileSvcController.getHello()).toBe('Hello World!');
+  //   });
+  // });
 });

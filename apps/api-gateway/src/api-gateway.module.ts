@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { SERVICES, DEFAULT_PORTS } from '@app/common';
+import { SERVICES, DEFAULT } from '@app/common';
 import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
+import { AuthController } from './controllers/auth.controller';
+import { FileController } from './controllers/file.controller';
+import { AttendanceController } from './controllers/attendance.controller';
+import { EmployeeController } from './controllers/employee.controller';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 
@@ -29,8 +33,8 @@ import * as winston from 'winston';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: configService.get<string>('AUTH_HOST', '127.0.0.1'),
-            port: configService.get<number>('AUTH_PORT', DEFAULT_PORTS.AUTH),
+            host: configService.get<string>('AUTH_HOST', DEFAULT.HOST),
+            port: configService.get<number>('AUTH_PORT', DEFAULT.PORTS.AUTH),
           },
         }),
         inject: [ConfigService],
@@ -41,8 +45,8 @@ import * as winston from 'winston';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: configService.get<string>('FILE_HOST', '127.0.0.1'),
-            port: configService.get<number>('FILE_PORT', DEFAULT_PORTS.FILE),
+            host: configService.get<string>('FILE_HOST', DEFAULT.HOST),
+            port: configService.get<number>('FILE_PORT', DEFAULT.PORTS.FILE),
           },
         }),
         inject: [ConfigService],
@@ -53,8 +57,8 @@ import * as winston from 'winston';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: configService.get<string>('ATTENDANCE_HOST', '127.0.0.1'),
-            port: configService.get<number>('ATTENDANCE_PORT', DEFAULT_PORTS.ATTENDANCE),
+            host: configService.get<string>('ATTENDANCE_HOST', DEFAULT.HOST),
+            port: configService.get<number>('ATTENDANCE_PORT', DEFAULT.PORTS.ATTENDANCE),
           },
         }),
         inject: [ConfigService],
@@ -65,15 +69,21 @@ import * as winston from 'winston';
         useFactory: (configService: ConfigService) => ({
           transport: Transport.TCP,
           options: {
-            host: configService.get<string>('EMPLOYEE_HOST', '127.0.0.1'),
-            port: configService.get<number>('EMPLOYEE_PORT', DEFAULT_PORTS.EMPLOYEE),
+            host: configService.get<string>('EMPLOYEE_HOST', DEFAULT.HOST),
+            port: configService.get<number>('EMPLOYEE_PORT', DEFAULT.PORTS.EMPLOYEE),
           },
         }),
         inject: [ConfigService],
       },
     ]),
   ],
-  controllers: [ApiGatewayController],
+  controllers: [
+    ApiGatewayController,
+    AuthController,
+    FileController,
+    AttendanceController,
+    EmployeeController,
+  ],
   providers: [ApiGatewayService],
 })
 export class ApiGatewayModule { }

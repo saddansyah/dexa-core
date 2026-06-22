@@ -5,12 +5,15 @@ export const SERVICES = {
   EMPLOYEE: 'EMPLOYEE_SERVICE',
 } as const;
 
-export const DEFAULT_PORTS = {
-  GATEWAY: 9000,
-  AUTH: 9001,
-  FILE: 9002,
-  ATTENDANCE: 9003,
-  EMPLOYEE: 9004,
+export const DEFAULT = {
+  PORTS: {
+    GATEWAY: 9000,
+    AUTH: 9001,
+    FILE: 9002,
+    ATTENDANCE: 9003,
+    EMPLOYEE: 9004,
+  },
+  HOST: '127.0.0.1'
 } as const;
 
 export const COMMANDS = {
@@ -18,7 +21,6 @@ export const COMMANDS = {
     TEST: 'test-auth',
   },
   FILE: {
-    TEST: 'test-file',
     UPLOAD: 'upload-file',
     DELETE: 'delete-file',
     GET_PRESIGNED_URL: 'get-presigned-url',
@@ -30,3 +32,5 @@ export const COMMANDS = {
     TEST: 'test-employee',
   },
 } as const;
+
+export const DEFAULT_PORTS = DEFAULT.PORTS;
