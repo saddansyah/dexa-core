@@ -57,9 +57,15 @@ export class EmployeeSvcService {
           email: users.email,
           roleId: users.roleId,
         },
+        department: {
+          id: departments.id,
+          name: departments.name,
+          description: departments.description,
+        },
       })
       .from(employees)
       .innerJoin(users, eq(employees.userId, users.id))
+      .leftJoin(departments, eq(employees.departmentId, departments.id))
       .orderBy(desc(employees.id))
       .limit(limit)
       .offset(offset)
@@ -100,9 +106,15 @@ export class EmployeeSvcService {
         email: users.email,
         roleId: users.roleId,
       },
+      department: {
+        id: departments.id,
+        name: departments.name,
+        description: departments.description,
+      },
     })
       .from(employees)
       .innerJoin(users, eq(employees.userId, users.id))
+      .leftJoin(departments, eq(employees.departmentId, departments.id))
       .where(or(eq(employees.id, id), eq(employees.userId, id)));
 
     if (result[0]) {
@@ -154,9 +166,15 @@ export class EmployeeSvcService {
           email: users.email,
           roleId: users.roleId,
         },
+        department: {
+          id: departments.id,
+          name: departments.name,
+          description: departments.description,
+        },
       })
       .from(employees)
       .innerJoin(users, eq(employees.userId, users.id))
+      .leftJoin(departments, eq(employees.departmentId, departments.id))
       .where(eq(users.email, email));
 
     if (!result[0]) throw new NotFoundException('Employee not found');
