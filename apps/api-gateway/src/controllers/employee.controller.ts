@@ -1,6 +1,6 @@
 import { Controller, Get, Inject, Param, UseGuards, Post, Body, Patch, Query, Delete } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { SERVICES, COMMANDS, GetEmployeeByEmailDto, GetEmployeeByIdDto, CreateEmployeeDto, UpdateEmployeeDto, GetEmployeesDto, AuthGuard, CurrentUser, RolesGuard, Roles } from '@app/common';
+import { SERVICES, COMMANDS, GetEmployeeByEmailDto, GetEmployeeByIdDto, CreateEmployeeDto, UpdateEmployeeDto, GetEmployeesDto, AuthGuard, CurrentUser, RolesGuard, Roles, JwtPayloadDto } from '@app/common';
 
 @Controller('employee')
 @UseGuards(AuthGuard, RolesGuard)
@@ -11,8 +11,8 @@ export class EmployeeController {
 
   @Get('me')
   @Roles(['admin', 'hr', 'employee'])
-  getMe(@CurrentUser() user: any) {
-    return user;
+  getMe(@CurrentUser() user: JwtPayloadDto) {
+    return this.employeeClient.send({ cmd: COMMANDS.EMPLOYEE.GET_BY_ID }, { id: user.sub });
   }
 
   @Post()

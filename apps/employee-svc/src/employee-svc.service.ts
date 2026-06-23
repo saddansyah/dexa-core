@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException, ConflictException } from '@nestj
 import { DRIZZLE_MODULE_PROVIDER, employees, users } from '@app/database';
 import { MySql2Database } from 'drizzle-orm/mysql2';
 import * as dbSchema from '@app/database';
-import { eq, and, desc, count } from 'drizzle-orm';
+import { eq, and, desc, count, or } from 'drizzle-orm';
 import { CreateEmployeeDto, UpdateEmployeeDto, GetEmployeesDto, hashPassword } from '@app/common';
 import { v7 as uuidv7 } from 'uuid';
 
@@ -103,11 +103,37 @@ export class EmployeeSvcService {
     })
       .from(employees)
       .innerJoin(users, eq(employees.userId, users.id))
-      .where(eq(employees.id, id));
+      .where(or(eq(employees.id, id), eq(employees.userId, id)));
 
-    if (!result[0]) throw new NotFoundException('Employee not found');
+    if (result[0]) {
+      return result[0];
+    }
 
-    return result[0];
+    // Fallback: Check if the user exists directly in the users table (e.g. Admin user without employee record)
+    const userResult = await this.db.select({
+      id: users.id,
+      email: users.email,
+      roleId: users.roleId,
+    })
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
+
+    if (!userResult[0]) {
+      throw new NotFoundException('Employee or User not found');
+    }
+
+    return {
+      id: null,
+      name: 'Admin',
+      address: null,
+      dob: null,
+      position: null,
+      joinDate: null,
+      resignDate: null,
+      status: null,
+      user: userResult[0],
+    };
   }
 
   async getByEmail(email: string) {

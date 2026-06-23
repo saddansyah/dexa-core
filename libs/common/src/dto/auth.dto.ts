@@ -22,8 +22,30 @@ export const RegisterSchema = z.object({
 
 export class RegisterDto extends createZodDto(RegisterSchema) { }
 
-export const RefreshTokenSchema = z.object({
+export const RefreshTokenBodySchema = z.object({
     refreshToken: z.string().min(1, "Refresh token is required").describe("The active refresh token of the user"),
 })
 
-export class RefreshTokenDto extends createZodDto(RefreshTokenSchema) { }
+export class RefreshTokenBodyDto extends createZodDto(RefreshTokenBodySchema) { }
+
+export const RefreshTokenPayloadSchema = z.object({
+    sub: z.string().describe("User ID associated with the refresh token"),
+    type: z.literal("refresh").describe("Token type"),
+    iat: z.number().optional().describe("Issued at timestamp"),
+    exp: z.number().optional().describe("Expiration timestamp"),
+})
+
+export class RefreshTokenDto extends createZodDto(RefreshTokenPayloadSchema) { }
+
+export const JwtPayloadSchema = z.object({
+    sub: z.string().describe("User ID"),
+    email: z.email().describe("User email address"),
+    roleId: z.string().describe("Role ID"),
+    role: z.string().describe("Role name/ID"),
+    employeeId: z.string().optional().describe("Employee ID if applicable"),
+    name: z.string().optional().describe("Employee name if applicable"),
+    iat: z.number().optional().describe("Issued at timestamp"),
+    exp: z.number().optional().describe("Expiration timestamp"),
+})
+
+export class JwtPayloadDto extends createZodDto(JwtPayloadSchema) { }

@@ -5,7 +5,7 @@ import { MySql2Database } from 'drizzle-orm/mysql2';
 import * as dbSchema from '@app/database';
 import { eq } from 'drizzle-orm';
 import { v7 as uuidv7 } from 'uuid';
-import { RegisterDto, hashPassword, comparePassword } from '@app/common';
+import { RegisterDto, hashPassword, comparePassword, JwtPayloadDto, RefreshTokenDto } from '@app/common';
 
 @Injectable()
 export class AuthSvcService {
@@ -87,20 +87,21 @@ export class AuthSvcService {
 
     const employee = employeeResult[0];
 
-    const payload = {
+    const payload: JwtPayloadDto = {
       sub: user.id,
       email: user.email,
       roleId: user.roleId,
       role: user.roleId,
-      employeeId: employee?.id,
-      name: employee?.name,
+      employeeId: employee?.id ?? undefined,
+      name: employee?.name ?? undefined,
     };
 
     const accessToken = await this.jwtService.signAsync(payload, { expiresIn: '15m' });
-    const refreshToken = await this.jwtService.signAsync(
-      { sub: user.id, type: 'refresh' },
-      { expiresIn: '7d' }
-    );
+    const refreshTokenPayload: RefreshTokenDto = {
+      sub: user.id,
+      type: 'refresh',
+    };
+    const refreshToken = await this.jwtService.signAsync(refreshTokenPayload, { expiresIn: '7d' });
 
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
@@ -118,9 +119,9 @@ export class AuthSvcService {
     };
   }
 
-  async refreshToken(token: string): Promise<{ access_token: string; refresh_token: string }> {
+  async refreshToken(refreshToken: string): Promise<{ access_token: string; refresh_token: string }> {
     try {
-      const payload = await this.jwtService.verifyAsync(token);
+      const payload = await this.jwtService.verifyAsync<RefreshTokenDto>(refreshToken);
       if (payload.type !== 'refresh') {
         throw new UnauthorizedException('Invalid token type');
       }
@@ -129,7 +130,7 @@ export class AuthSvcService {
       const storedTokenResult = await this.db
         .select()
         .from(refreshTokens)
-        .where(eq(refreshTokens.token, token))
+        .where(eq(refreshTokens.token, refreshToken))
         .limit(1);
 
       const storedToken = storedTokenResult[0];
@@ -143,7 +144,7 @@ export class AuthSvcService {
         throw new UnauthorizedException('Refresh token has expired');
       }
 
-      // Fetch user and employee to construct new payload
+      // Fetch user and employee to construct new payload then generate new token pair
       const userResult = await this.db
         .select()
         .from(users)
@@ -163,20 +164,21 @@ export class AuthSvcService {
 
       const employee = employeeResult[0];
 
-      const newPayload = {
+      const newPayload: JwtPayloadDto = {
         sub: user.id,
         email: user.email,
         roleId: user.roleId,
         role: user.roleId,
-        employeeId: employee?.id,
-        name: employee?.name,
+        employeeId: employee?.id ?? undefined,
+        name: employee?.name ?? undefined,
       };
 
       const accessToken = await this.jwtService.signAsync(newPayload, { expiresIn: '15m' });
-      const newRefreshToken = await this.jwtService.signAsync(
-        { sub: user.id, type: 'refresh' },
-        { expiresIn: '7d' }
-      );
+      const newRefreshTokenPayload: RefreshTokenDto = {
+        sub: user.id,
+        type: 'refresh',
+      };
+      const newRefreshToken = await this.jwtService.signAsync(newRefreshTokenPayload, { expiresIn: '7d' });
 
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 7);
@@ -205,6 +207,11 @@ export class AuthSvcService {
 
   async logout(token: string): Promise<{ success: boolean }> {
     await this.db.delete(refreshTokens).where(eq(refreshTokens.token, token));
+    return { success: true };
+  }
+
+  async logoutAll(userId: string): Promise<{ success: boolean }> {
+    await this.db.delete(refreshTokens).where(eq(refreshTokens.userId, userId));
     return { success: true };
   }
 

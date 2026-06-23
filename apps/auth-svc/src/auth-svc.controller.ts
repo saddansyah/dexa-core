@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { COMMANDS, LoginDto, RegisterDto, CreateRoleDto, GetRoleByIdDto, RefreshTokenDto } from '@app/common';
+import { COMMANDS, LoginDto, RegisterDto, CreateRoleDto, GetRoleByIdDto, RefreshTokenBodyDto } from '@app/common';
 
 import { AuthSvcService } from './auth-svc.service';
 
@@ -28,7 +28,7 @@ export class AuthSvcController {
   }
 
   @MessagePattern({ cmd: COMMANDS.AUTH.REFRESH_TOKEN })
-  async handleRefreshToken(@Payload() data: RefreshTokenDto) {
+  async handleRefreshToken(@Payload() data: RefreshTokenBodyDto) {
     const result = await this.authSvcService.refreshToken(data.refreshToken);
     return {
       data: result,
@@ -36,8 +36,16 @@ export class AuthSvcController {
   }
 
   @MessagePattern({ cmd: COMMANDS.AUTH.LOGOUT })
-  async handleLogout(@Payload() data: RefreshTokenDto) {
+  async handleLogout(@Payload() data: RefreshTokenBodyDto) {
     const result = await this.authSvcService.logout(data.refreshToken);
+    return {
+      data: result,
+    };
+  }
+
+  @MessagePattern({ cmd: COMMANDS.AUTH.LOGOUT_ALL })
+  async handleLogoutAll(@Payload() data: { userId: string }) {
+    const result = await this.authSvcService.logoutAll(data.userId);
     return {
       data: result,
     };

@@ -27,6 +27,7 @@ export const COMMANDS = {
     DELETE_ROLE: 'delete-role',
     REFRESH_TOKEN: 'refresh-token',
     LOGOUT: 'logout',
+    LOGOUT_ALL: 'logout-all',
   },
   FILE: {
     UPLOAD: 'upload-file',

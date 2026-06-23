@@ -10,11 +10,12 @@ export class EmployeeSvcController {
   constructor(private readonly employeeSvcService: EmployeeSvcService) { }
 
   @MessagePattern({ cmd: COMMANDS.EMPLOYEE.GET_ALL })
-  async handleGetEmployees(@Payload() data: GetEmployeesDto) {
-    this.logger.log(`Received get employees list message with filters: ${JSON.stringify(data)}`);
-    const employees = await this.employeeSvcService.getAll(data);
+  async handleGetEmployees(@Payload() filters: GetEmployeesDto) {
+    this.logger.log(`Received get employees list message with filters: ${JSON.stringify(filters)}`);
+    const { data, meta } = await this.employeeSvcService.getAll(filters);
     return {
-      data: employees,
+      data,
+      meta
     };
   }
 

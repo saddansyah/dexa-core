@@ -33,7 +33,7 @@ export const employees = mysqlTable('employees', {
 
 export const users = mysqlTable('users', {
   id: varchar('id', { length: 36 }).primaryKey().$defaultFn(() => uuidv7()),
-  roleId: varchar('role_id', { length: 50 }).references(() => roles.id, { onDelete: 'restrict' }),
+  roleId: varchar('role_id', { length: 50 }).references(() => roles.id, { onDelete: 'restrict' }).notNull(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
   createdAt: timestamp('created_at').defaultNow(),

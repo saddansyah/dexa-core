@@ -1,6 +1,6 @@
 import { Controller, Get, Inject, UseGuards, Post, Body, Query, Param, Patch, Delete, ForbiddenException } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { SERVICES, COMMANDS, AuthGuard, RolesGuard, Roles, CurrentUser, CreateAttendanceDto, UpdateAttendanceDto, GetAttendancesDto } from '@app/common';
+import { SERVICES, COMMANDS, AuthGuard, RolesGuard, Roles, CurrentUser, CreateAttendanceDto, UpdateAttendanceDto, GetAttendancesDto, JwtPayloadDto } from '@app/common';
 
 @Controller('attendance')
 @UseGuards(AuthGuard, RolesGuard)
@@ -11,7 +11,7 @@ export class AttendanceController {
 
   @Post()
   @Roles(['admin', 'hr', 'employee'])
-  createAttendance(@CurrentUser() user: any, @Body() data: CreateAttendanceDto) {
+  createAttendance(@CurrentUser() user: JwtPayloadDto, @Body() data: CreateAttendanceDto) {
     const payload = { ...data };
     if (user.role !== 'admin') {
       payload.employeeId = user.employeeId;
@@ -21,7 +21,7 @@ export class AttendanceController {
 
   @Get()
   @Roles(['admin', 'hr', 'employee'])
-  getAttendances(@CurrentUser() user: any, @Query() query: GetAttendancesDto) {
+  getAttendances(@CurrentUser() user: JwtPayloadDto, @Query() query: GetAttendancesDto) {
     const payload = { ...query };
     if (user.role === 'employee') {
       payload.employeeId = user.employeeId;
@@ -34,7 +34,7 @@ export class AttendanceController {
   getAttendanceById(
     @Param('employeeId') employeeId: string,
     @Param('date') date: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: JwtPayloadDto,
   ) {
     if (user.role === 'employee' && employeeId !== user.employeeId) {
       throw new ForbiddenException('You can only view your own attendance');
@@ -50,7 +50,7 @@ export class AttendanceController {
   updateAttendance(
     @Param('employeeId') employeeId: string,
     @Param('date') date: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: JwtPayloadDto,
     @Body() data: UpdateAttendanceDto,
   ) {
     if (user.role !== 'admin' && employeeId !== user.employeeId) {
@@ -67,7 +67,7 @@ export class AttendanceController {
   deleteAttendance(
     @Param('employeeId') employeeId: string,
     @Param('date') date: string,
-    @CurrentUser() user: any,
+    @CurrentUser() user: JwtPayloadDto,
   ) {
     if (user.role !== 'admin' && employeeId !== user.employeeId) {
       throw new ForbiddenException('You can only delete your own attendance');
