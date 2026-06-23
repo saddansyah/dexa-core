@@ -63,7 +63,6 @@ export class AuthController {
 
   @Get('roles')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(['admin'])
   @ApiOperation({ summary: 'Get all roles (Admin only)' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved all roles' })
   getRoles() {
@@ -72,7 +71,6 @@ export class AuthController {
 
   @Get('roles/:id')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(['admin'])
   @ApiOperation({ summary: 'Get role details by ID (Admin only)' })
   @ApiParam({ name: 'id', type: 'string', description: 'Unique ID of the role' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved role details' })
