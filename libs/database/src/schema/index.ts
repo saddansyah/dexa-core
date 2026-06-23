@@ -55,7 +55,6 @@ export const attendances = mysqlTable('attendances', {
   clockInPhoto: varchar('clock_in_photo', { length: 255 }),
   clockOutTime: timestamp('clock_out_time'),
   clockOutPhoto: varchar('clock_out_photo', { length: 255 }),
-  status: mysqlEnum('status', ['present', 'late', 'absent', 'incomplete']),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 }, (t) => [

@@ -31,9 +31,7 @@ export class AttendanceSvcService {
       const endStr = this.parseDateInOfficeTimezone(filters.endDate);
       conditions.push(lte(attendances.attendanceDate, sql<Date>`${endStr}`));
     }
-    if (filters?.status) {
-      conditions.push(eq(attendances.status, filters.status));
-    }
+
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
@@ -57,7 +55,6 @@ export class AttendanceSvcService {
         clockInPhoto: attendances.clockInPhoto,
         clockOutTime: attendances.clockOutTime,
         clockOutPhoto: attendances.clockOutPhoto,
-        status: attendances.status,
         createdAt: attendances.createdAt,
         updatedAt: attendances.updatedAt,
         employeeName: employees.name,
@@ -141,23 +138,6 @@ export class AttendanceSvcService {
       throw new ConflictException('Attendance record for this employee and date already exists');
     }
 
-    // 3. Status calculation
-    let calculatedStatus: 'present' | 'late' | 'absent' | 'incomplete' = 'present';
-    if (data.status) {
-      calculatedStatus = data.status;
-    } else if (data.clockInTime) {
-      const clockIn = new Date(data.clockInTime);
-      const hours = clockIn.getUTCHours();
-      const minutes = clockIn.getUTCMinutes();
-      if (hours > 8 || (hours === 8 && minutes > 30)) {
-        calculatedStatus = 'late';
-      } else {
-        calculatedStatus = 'present';
-      }
-    } else {
-      calculatedStatus = 'incomplete';
-    }
-
     const insertData = {
       employeeId: data.employeeId!,
       attendanceDate: dateStr as any,
@@ -165,7 +145,6 @@ export class AttendanceSvcService {
       clockInPhoto: data.clockInPhoto ?? null,
       clockOutTime: data.clockOutTime ? new Date(data.clockOutTime) : null,
       clockOutPhoto: data.clockOutPhoto ?? null,
-      status: calculatedStatus,
     };
 
     await this.db.insert(attendances).values(insertData);
@@ -196,23 +175,6 @@ export class AttendanceSvcService {
     if (data.clockInPhoto !== undefined) updateData.clockInPhoto = data.clockInPhoto;
     if (data.clockOutTime !== undefined) updateData.clockOutTime = data.clockOutTime ? new Date(data.clockOutTime) : null;
     if (data.clockOutPhoto !== undefined) updateData.clockOutPhoto = data.clockOutPhoto;
-
-    if (data.status !== undefined) {
-      updateData.status = data.status;
-    } else if (data.clockOutTime && existing.status === 'incomplete') {
-      const clockIn = existing.clockInTime;
-      if (clockIn) {
-        const hours = clockIn.getUTCHours();
-        const minutes = clockIn.getUTCMinutes();
-        if (hours > 8 || (hours === 8 && minutes > 30)) {
-          updateData.status = 'late';
-        } else {
-          updateData.status = 'present';
-        }
-      } else {
-        updateData.status = 'present';
-      }
-    }
 
     if (Object.keys(updateData).length > 0) {
       await this.db

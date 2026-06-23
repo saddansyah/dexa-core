@@ -8,7 +8,6 @@ export const CreateAttendanceSchema = z.object({
   clockInPhoto: z.url().optional().describe("URL/reference to clock-in photo"),
   clockOutTime: z.iso.datetime().optional().describe("Clock-out time (ISO format)"),
   clockOutPhoto: z.url().optional().describe("URL/reference to clock-out photo"),
-  status: z.enum(["present", "late", "absent", "incomplete"]).optional().describe("Attendance status"),
 });
 
 export class CreateAttendanceDto extends createZodDto(CreateAttendanceSchema) { }
@@ -18,7 +17,6 @@ export const UpdateAttendanceSchema = z.object({
   clockInPhoto: z.url().optional().describe("URL/reference to clock-in photo"),
   clockOutTime: z.iso.datetime().optional().describe("Clock-out time (ISO format)"),
   clockOutPhoto: z.url().optional().describe("URL/reference to clock-out photo"),
-  status: z.enum(["present", "late", "absent", "incomplete"]).optional().describe("Attendance status"),
 });
 
 export class UpdateAttendanceDto extends createZodDto(UpdateAttendanceSchema) { }
@@ -27,7 +25,6 @@ export const GetAttendancesSchema = z.object({
   employeeId: z.uuidv7().optional().describe("Filter by employee ID"),
   startDate: z.iso.datetime().optional().describe("Start date filter in ISO 8601"),
   endDate: z.iso.datetime().optional().describe("End date filter in ISO 8601"),
-  status: z.enum(["present", "late", "absent", "incomplete"]).optional().describe("Filter by status"),
   limit: z.coerce.number().min(1).max(100).optional().default(10).describe("Max records to return per page"),
   page: z.coerce.number().min(1).optional().default(1).describe("Page number (1-indexed)"),
 });

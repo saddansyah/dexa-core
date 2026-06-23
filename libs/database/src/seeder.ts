@@ -157,24 +157,18 @@ async function main() {
 
       const dateStr = dateVal.toISOString().split('T')[0];
       const rand = Math.random();
-      let status: 'present' | 'late' | 'absent' | 'incomplete' = 'present';
       let clockInTime: Date | null = null;
       let clockOutTime: Date | null = null;
 
       if (rand < 0.7) {
-        status = 'present';
         clockInTime = new Date(`${dateStr}T08:30:00Z`);
         clockOutTime = new Date(`${dateStr}T17:30:00Z`);
       } else if (rand < 0.85) {
-        status = 'late';
         clockInTime = new Date(`${dateStr}T09:15:00Z`);
         clockOutTime = new Date(`${dateStr}T17:30:00Z`);
       } else if (rand < 0.95) {
-        status = 'incomplete';
         clockInTime = new Date(`${dateStr}T08:45:00Z`);
         clockOutTime = null;
-      } else {
-        status = 'absent';
       }
 
       attendanceRecords.push({
@@ -184,7 +178,6 @@ async function main() {
         clockInPhoto: clockInTime ? `https://jollycontrarian.com/images/6/6c/Rickroll.jpg` : null,
         clockOutTime,
         clockOutPhoto: clockOutTime ? `https://jollycontrarian.com/images/6/6c/Rickroll.jpg` : null,
-        status,
       });
     }
   }

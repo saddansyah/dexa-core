@@ -49,7 +49,7 @@ export class AttendanceController {
   }
 
   @Delete('my/:date')
-  @Roles(['admin', 'hr', 'employee'])
+  @Roles(['admin', 'hr'])
   deleteMyAttendance(
     @Param('date') date: string,
     @CurrentUser() user: JwtPayloadDto,
