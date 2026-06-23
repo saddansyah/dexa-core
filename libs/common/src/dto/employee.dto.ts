@@ -17,27 +17,26 @@ export const CreateEmployeeSchema = z.object({
     email: z.email("Invalid email format").min(1, "Email is required").describe("Unique email address of the employee"),
     password: z.string().min(6, "Password must be at least 6 characters").describe("Secure password for the account"),
     name: z.string().min(1, "Name is required").describe("Full name of the employee"),
-    dob: z.string().describe("Date of birth in string format (YYYY-MM-DD)"),
+    dob: z.iso.date().describe("Date of birth in string format (YYYY-MM-DD)"),
     roleId: z.string().min(1, "Role ID is required").describe("ID of the role assigned (e.g. admin, hr, employee)"),
     departmentId: z.number().optional().describe("Optional department ID assigned to this employee"),
     address: z.string().optional().describe("Optional residential address of the employee"),
     position: z.string().optional().describe("Optional job title or position"),
     status: z.enum(['permanent', 'contract', 'intern']).optional().default('contract').describe("Employment status/type of contract"),
-    joinDate: z.string().optional().describe("Optional join date string (YYYY-MM-DD, defaults to today)"),
+    joinDate: z.iso.date().optional().describe("Optional join date string (YYYY-MM-DD, defaults to today)"),
 });
 
 export class CreateEmployeeDto extends createZodDto(CreateEmployeeSchema) { }
 
 export const UpdateEmployeeSchema = z.object({
-    email: z.email("Invalid email format").optional().describe("Updated email address of the employee"),
     roleId: z.string().optional().describe("Updated role ID (e.g. admin, hr, employee)"),
     name: z.string().optional().describe("Updated name of the employee"),
-    dob: z.string().optional().describe("Updated date of birth string (YYYY-MM-DD)"),
+    dob: z.iso.date().optional().describe("Updated date of birth string (YYYY-MM-DD)"),
     departmentId: z.number().nullable().optional().describe("Updated department ID"),
     address: z.string().optional().describe("Updated residential address"),
     position: z.string().optional().describe("Updated job title or position"),
     status: z.enum(['permanent', 'contract', 'intern']).optional().describe("Updated employment status"),
-    joinDate: z.string().optional().describe("Updated join date string (YYYY-MM-DD)"),
+    joinDate: z.iso.date().optional().describe("Updated join date string (YYYY-MM-DD)"),
     resignDate: z.string().optional().describe("Updated resign date string (YYYY-MM-DD)"),
 });
 

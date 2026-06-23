@@ -207,37 +207,16 @@ export class EmployeeSvcService {
   }
 
   async update(id: string, data: UpdateEmployeeDto) {
-    const employeeResult = await this.db
-      .select()
-      .from(employees)
-      .where(eq(employees.id, id))
-      .limit(1);
+    const employee = await this.getById(id)
 
-    const employee = employeeResult[0];
-    if (!employee) {
-      throw new NotFoundException('Employee not found');
-    }
-
-    const { email, roleId, name, dob, departmentId, address, position, status, joinDate, resignDate } = data;
+    const { roleId, name, dob, departmentId, address, position, status, joinDate, resignDate } = data;
 
     await this.db.transaction(async (tx) => {
-      if (email || roleId) {
-        if (email) {
-          const userResult = await tx.select().from(users).where(eq(users.id, employee.userId!)).limit(1);
-          const currentUser = userResult[0];
-          if (currentUser && currentUser.email !== email) {
-            const emailInUse = await tx.select().from(users).where(eq(users.email, email)).limit(1);
-            if (emailInUse[0]) {
-              throw new ConflictException('Email already in use');
-            }
-          }
-        }
+      const userUpdateData: Partial<typeof users.$inferInsert> = {};
+      if (roleId) userUpdateData.roleId = roleId;
 
-        const userUpdateData: Partial<typeof users.$inferInsert> = {};
-        if (email) userUpdateData.email = email;
-        if (roleId) userUpdateData.roleId = roleId;
-
-        await tx.update(users).set(userUpdateData).where(eq(users.id, employee.userId!));
+      if (Object.keys(userUpdateData).length > 0) {
+        await tx.update(users).set(userUpdateData).where(eq(users.id, employee.user.id));
       }
 
       const employeeUpdateData: Partial<typeof employees.$inferInsert> = {};
@@ -259,18 +238,9 @@ export class EmployeeSvcService {
   }
 
   async delete(id: string) {
-    const employeeResult = await this.db
-      .select()
-      .from(employees)
-      .where(eq(employees.id, id))
-      .limit(1);
+    const employee = await this.getById(id);
 
-    const employee = employeeResult[0];
-    if (!employee) {
-      throw new NotFoundException('Employee not found');
-    }
-
-    await this.db.delete(users).where(eq(users.id, employee.userId!));
+    await this.db.delete(users).where(eq(users.id, employee.user.id));
 
     return { success: true };
   }
