@@ -220,6 +220,93 @@ export class AttendanceSvcService {
     return { success: true };
   }
 
+  async clockIn(employeeId: string, clockInPhoto: string) {
+    const officeTimezone = this.configService.getOrThrow<string>('OFFICE_TIMEZONE');
+    const dateStr = new Date().toLocaleDateString('sv-SE', { timeZone: officeTimezone });
+
+    // 1. Check if employee exists
+    const employee = await this.db
+      .select()
+      .from(employees)
+      .where(eq(employees.id, employeeId))
+      .limit(1);
+
+    if (!employee[0]) {
+      throw new NotFoundException('Employee not found');
+    }
+
+    // 2. Check if already clocked in today
+    const existing = await this.db
+      .select()
+      .from(attendances)
+      .where(
+        and(
+          eq(attendances.employeeId, employeeId),
+          eq(attendances.attendanceDate, sql<Date>`${dateStr}`)
+        )
+      )
+      .limit(1);
+
+    if (existing[0]) {
+      throw new ConflictException('Already clocked in today');
+    }
+
+    const insertData = {
+      employeeId,
+      attendanceDate: dateStr as any,
+      clockInTime: new Date(),
+      clockInPhoto,
+      clockOutTime: null,
+      clockOutPhoto: null,
+    };
+
+    await this.db.insert(attendances).values(insertData);
+
+    return this.getById(employeeId, dateStr);
+  }
+
+  async clockOut(employeeId: string, clockOutPhoto: string) {
+    const officeTimezone = this.configService.getOrThrow<string>('OFFICE_TIMEZONE');
+    const dateStr = new Date().toLocaleDateString('sv-SE', { timeZone: officeTimezone });
+
+    // 1. Find existing attendance record
+    const existing = await this.db
+      .select()
+      .from(attendances)
+      .where(
+        and(
+          eq(attendances.employeeId, employeeId),
+          eq(attendances.attendanceDate, sql<Date>`${dateStr}`)
+        )
+      )
+      .limit(1);
+
+    const attendance = existing[0];
+    if (!attendance) {
+      throw new NotFoundException('Must clock in first');
+    }
+
+    // 2. Check if already clocked out
+    if (attendance.clockOutTime) {
+      throw new ConflictException('Already clocked out today');
+    }
+
+    await this.db
+      .update(attendances)
+      .set({
+        clockOutTime: new Date(),
+        clockOutPhoto,
+      })
+      .where(
+        and(
+          eq(attendances.employeeId, employeeId),
+          eq(attendances.attendanceDate, sql<Date>`${dateStr}`)
+        )
+      );
+
+    return this.getById(employeeId, dateStr);
+  }
+
   private parseDateInOfficeTimezone(dateStr: string): string {
     const officeTimezone = this.configService.getOrThrow<string>('OFFICE_TIMEZONE');
     if (dateStr.length <= 10) {

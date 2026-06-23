@@ -37,3 +37,15 @@ export const GetAttendanceByIdSchema = z.object({
 });
 
 export class GetAttendanceByIdDto extends createZodDto(GetAttendanceByIdSchema) { }
+
+export const ClockInSchema = z.object({
+  photo: z.url().describe("Clock-in photo URL"),
+});
+
+export class ClockInDto extends createZodDto(ClockInSchema) { }
+
+export const ClockOutSchema = z.object({
+  photo: z.url().describe("Clock-out photo URL"),
+});
+
+export class ClockOutDto extends createZodDto(ClockOutSchema) { }

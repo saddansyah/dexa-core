@@ -53,5 +53,23 @@ export class AttendanceSvcController {
       data: result,
     };
   }
+
+  @MessagePattern({ cmd: COMMANDS.ATTENDANCE.CLOCK_IN })
+  async handleClockIn(@Payload() data: { employeeId: string; clockInPhoto: string }) {
+    this.logger.log(`Received clock-in message: ${JSON.stringify(data)}`);
+    const result = await this.attendanceSvcService.clockIn(data.employeeId, data.clockInPhoto);
+    return {
+      data: result,
+    };
+  }
+
+  @MessagePattern({ cmd: COMMANDS.ATTENDANCE.CLOCK_OUT })
+  async handleClockOut(@Payload() data: { employeeId: string; clockOutPhoto: string }) {
+    this.logger.log(`Received clock-out message: ${JSON.stringify(data)}`);
+    const result = await this.attendanceSvcService.clockOut(data.employeeId, data.clockOutPhoto);
+    return {
+      data: result,
+    };
+  }
 }
 

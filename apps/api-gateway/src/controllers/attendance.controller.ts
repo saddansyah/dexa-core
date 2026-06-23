@@ -1,6 +1,6 @@
 import { Controller, Get, Inject, UseGuards, Post, Body, Query, Param, Patch, Delete } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { SERVICES, COMMANDS, AuthGuard, RolesGuard, Roles, CurrentUser, CreateAttendanceDto, UpdateAttendanceDto, GetAttendancesDto, JwtPayloadDto } from '@app/common';
+import { SERVICES, COMMANDS, AuthGuard, RolesGuard, Roles, CurrentUser, CreateAttendanceDto, UpdateAttendanceDto, GetAttendancesDto, JwtPayloadDto, ClockInDto, ClockOutDto } from '@app/common';
 
 @Controller('attendance')
 @UseGuards(AuthGuard, RolesGuard)
@@ -9,53 +9,37 @@ export class AttendanceController {
     @Inject(SERVICES.ATTENDANCE) private readonly attendanceClient: ClientProxy,
   ) { }
 
-  @Post('my')
+  @Post('clock-in')
   @Roles(['admin', 'hr', 'employee'])
-  createMyAttendance(@CurrentUser() user: JwtPayloadDto, @Body() data: CreateAttendanceDto) {
-    const payload = { ...data, employeeId: user.employeeId };
-    return this.attendanceClient.send({ cmd: COMMANDS.ATTENDANCE.CREATE }, payload);
+  clockIn(@CurrentUser() user: JwtPayloadDto, @Body() data: ClockInDto) {
+    return this.attendanceClient.send(
+      { cmd: COMMANDS.ATTENDANCE.CLOCK_IN },
+      { employeeId: user.employeeId, clockInPhoto: data.photo }
+    );
+  }
+
+  @Post('clock-out')
+  @Roles(['admin', 'hr', 'employee'])
+  clockOut(@CurrentUser() user: JwtPayloadDto, @Body() data: ClockOutDto) {
+    return this.attendanceClient.send(
+      { cmd: COMMANDS.ATTENDANCE.CLOCK_OUT },
+      { employeeId: user.employeeId, clockOutPhoto: data.photo }
+    );
   }
 
   @Get('my')
-  @Roles(['admin', 'hr', 'employee'])
   getMyAttendances(@CurrentUser() user: JwtPayloadDto, @Query() query: GetAttendancesDto) {
     const payload = { ...query, employeeId: user.employeeId };
     return this.attendanceClient.send({ cmd: COMMANDS.ATTENDANCE.GET_ALL }, payload);
   }
 
   @Get('my/:date')
-  @Roles(['admin', 'hr', 'employee'])
   getMyAttendanceById(
     @Param('date') date: string,
     @CurrentUser() user: JwtPayloadDto,
   ) {
     return this.attendanceClient.send(
       { cmd: COMMANDS.ATTENDANCE.GET_BY_ID },
-      { employeeId: user.employeeId, date }
-    );
-  }
-
-  @Patch('my/:date')
-  @Roles(['admin', 'hr', 'employee'])
-  updateMyAttendance(
-    @Param('date') date: string,
-    @CurrentUser() user: JwtPayloadDto,
-    @Body() data: UpdateAttendanceDto,
-  ) {
-    return this.attendanceClient.send(
-      { cmd: COMMANDS.ATTENDANCE.UPDATE },
-      { employeeId: user.employeeId, date, updateData: data }
-    );
-  }
-
-  @Delete('my/:date')
-  @Roles(['admin', 'hr'])
-  deleteMyAttendance(
-    @Param('date') date: string,
-    @CurrentUser() user: JwtPayloadDto,
-  ) {
-    return this.attendanceClient.send(
-      { cmd: COMMANDS.ATTENDANCE.DELETE },
       { employeeId: user.employeeId, date }
     );
   }

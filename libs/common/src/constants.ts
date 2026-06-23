@@ -40,6 +40,8 @@ export const COMMANDS = {
     CREATE: 'create-attendance',
     UPDATE: 'update-attendance',
     DELETE: 'delete-attendance',
+    CLOCK_IN: 'clock-in-attendance',
+    CLOCK_OUT: 'clock-out-attendance',
   },
   EMPLOYEE: {
     GET_ALL: 'get-employees',
