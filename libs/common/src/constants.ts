@@ -61,3 +61,7 @@ export const COMMANDS = {
 } as const;
 
 export const DEFAULT_PORTS = DEFAULT.PORTS;
+
+export const STORAGE_FOLDERS = {
+  ATTENDANCE: 'attendance',
+} as const;

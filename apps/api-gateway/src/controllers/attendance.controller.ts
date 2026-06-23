@@ -10,7 +10,6 @@ export class AttendanceController {
   ) { }
 
   @Post('clock-in')
-  @Roles(['admin', 'hr', 'employee'])
   clockIn(@CurrentUser() user: JwtPayloadDto, @Body() data: ClockInDto) {
     return this.attendanceClient.send(
       { cmd: COMMANDS.ATTENDANCE.CLOCK_IN },
@@ -19,7 +18,6 @@ export class AttendanceController {
   }
 
   @Post('clock-out')
-  @Roles(['admin', 'hr', 'employee'])
   clockOut(@CurrentUser() user: JwtPayloadDto, @Body() data: ClockOutDto) {
     return this.attendanceClient.send(
       { cmd: COMMANDS.ATTENDANCE.CLOCK_OUT },

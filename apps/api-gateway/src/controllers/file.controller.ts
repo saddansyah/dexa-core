@@ -1,16 +1,13 @@
 import {
   Controller,
   Post,
-  Delete,
-  Get,
   Inject,
   UseInterceptors,
   UploadedFile,
-  Body,
-  Query,
   ParseFilePipe,
   MaxFileSizeValidator,
   FileTypeValidator,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -18,11 +15,11 @@ import { ApiTags, ApiOperation, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import {
   SERVICES,
   COMMANDS,
-  UploadFileDto,
-  DeleteFileDto,
-  GetPresignedUrlDto,
+  AuthGuard,
+  CurrentUser,
+  JwtPayloadDto,
+  STORAGE_FOLDERS,
 } from '@app/common';
-import { v7 as uuidv7 } from 'uuid';
 import * as path from 'path';
 
 @ApiTags('File')
@@ -32,8 +29,9 @@ export class FileController {
     @Inject(SERVICES.FILE) private readonly fileClient: ClientProxy,
   ) { }
 
-  @Post('upload')
-  @ApiOperation({ summary: 'Upload file to S3' })
+  @Post('upload-attendance')
+  @UseGuards(AuthGuard)
+  @ApiOperation({ summary: 'Upload attendance photo to S3' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -42,15 +40,7 @@ export class FileController {
         file: {
           type: 'string',
           format: 'binary',
-          description: 'Binary file to be uploaded',
-        },
-        key: {
-          type: 'string',
-          description: 'Optional file key (defaults to original filename if empty)',
-        },
-        folder: {
-          type: 'string',
-          description: 'Optional subfolder in S3 (e.g., "attendance", "avatar")',
+          description: 'Binary file to be uploaded (attendance photo)',
         },
       },
     },
@@ -61,21 +51,22 @@ export class FileController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5 MB
-          new FileTypeValidator({ fileType: /(image\/jpeg|image\/png|image\/webp|image\/gif|application\/pdf)/ }),
+          new FileTypeValidator({ fileType: /(image\/jpeg|image\/png|image\/webp|image\/gif)/ }),
         ],
       }),
     )
     file: Express.Multer.File,
-    @Body() body: UploadFileDto,
+    @CurrentUser() user: JwtPayloadDto,
   ) {
+    const employeeId = user.employeeId || user.sub || 'unknown';
+    const employeeName = user.name
+      ? user.name.toLowerCase().replace(/[^a-z0-9]/g, '_')
+      : user.email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const timestamp = Date.now();
     const ext = path.extname(file.originalname);
-    const cleanName = path.basename(file.originalname, ext).replace(/[^a-zA-Z0-9.-]/g, '_');
-
-    let fileKey = body.key;
-    if (!fileKey) {
-      const folderPrefix = body.folder ? `${body.folder.replace(/\/$/, '')}/` : '';
-      fileKey = `${folderPrefix}${uuidv7()}-${cleanName}${ext}`;
-    }
+    
+    // Format: [folder]/employeeId-name-timestamp.ext
+    const fileKey = `${STORAGE_FOLDERS.ATTENDANCE}/${employeeId}-${employeeName}-${timestamp}${ext}`;
 
     return this.fileClient.send(
       { cmd: COMMANDS.FILE.UPLOAD },
@@ -89,25 +80,5 @@ export class FileController {
       },
     );
   }
-
-  @Delete()
-  @ApiOperation({ summary: 'Delete file from S3' })
-  async deleteFile(@Query() query: DeleteFileDto) {
-    return this.fileClient.send(
-      { cmd: COMMANDS.FILE.DELETE },
-      { key: query.key },
-    );
-  }
-
-  @Get('presigned-url')
-  @ApiOperation({ summary: 'Get presigned download URL for a file' })
-  async getPresignedUrl(@Query() query: GetPresignedUrlDto) {
-    return this.fileClient.send(
-      { cmd: COMMANDS.FILE.GET_PRESIGNED_URL },
-      {
-        key: query.key,
-        expiresInSeconds: query.expiresInSeconds,
-      },
-    );
-  }
 }
+
