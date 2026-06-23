@@ -28,7 +28,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, cleanupOpenApiDoc(document));
+  SwaggerModule.setup('api/docs', app, cleanupOpenApiDoc(document), { jsonDocumentUrl: 'openapi.json' });
 
   await app.listen(port);
   logger.log(`API Gateway is listening on port ${port}`);
