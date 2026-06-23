@@ -25,6 +25,6 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new MicroserviceExceptionFilter());
   await app.listen();
-  console.log(`Attendance Microservice is listening on host ${host} port ${port}...`);
+  logger.log(`Attendance Microservice is listening on host ${host} port ${port}...`);
 }
 bootstrap();

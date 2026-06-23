@@ -13,20 +13,20 @@ export class FileSvcService implements OnModuleInit {
   constructor(private readonly configService: ConfigService) { }
 
   onModuleInit() {
-    this.endpoint = this.configService.get<string>('STORAGE_ENDPOINT') || 'http://127.0.0.1:9000';
-    const region = this.configService.get<string>('STORAGE_REGION') || 'us-east-1';
-    const accessKeyId = this.configService.get<string>('STORAGE_ACCESS_KEY_ID');
-    const secretAccessKey = this.configService.get<string>('STORAGE_SECRET_ACCESS_KEY');
-    this.bucketName = this.configService.get<string>('STORAGE_BUCKET_NAME') || 'dexa-bucket';
-    const forcePathStyle = this.configService.get<string>('STORAGE_FORCE_PATH_STYLE') === 'true';
-    this.publicUrl = this.configService.get<string>('STORAGE_PUBLIC_URL');
+    this.endpoint = this.configService.getOrThrow<string>('STORAGE_ENDPOINT');
+    const region = this.configService.getOrThrow<string>('STORAGE_REGION');
+    const accessKeyId = this.configService.getOrThrow<string>('STORAGE_ACCESS_KEY_ID');
+    const secretAccessKey = this.configService.getOrThrow<string>('STORAGE_SECRET_ACCESS_KEY');
+    this.bucketName = this.configService.getOrThrow<string>('STORAGE_BUCKET_NAME');
+    const forcePathStyle = this.configService.getOrThrow<string>('STORAGE_FORCE_PATH_STYLE') === 'true';
+    this.publicUrl = this.configService.getOrThrow<string>('STORAGE_PUBLIC_URL');
 
     this.s3Client = new S3Client({
       endpoint: this.endpoint,
       region: region,
       credentials: {
-        accessKeyId: accessKeyId || 'minioadmin',
-        secretAccessKey: secretAccessKey || 'minioadmin',
+        accessKeyId: accessKeyId,
+        secretAccessKey: secretAccessKey,
       },
       forcePathStyle: forcePathStyle,
     });

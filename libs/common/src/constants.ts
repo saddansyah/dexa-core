@@ -49,6 +49,13 @@ export const COMMANDS = {
     UPDATE: 'update-employee',
     DELETE: 'delete-employee'
   },
+  DEPARTMENT: {
+    GET_ALL: 'get-departments',
+    GET_BY_ID: 'get-department-by-id',
+    CREATE: 'create-department',
+    UPDATE: 'update-department',
+    DELETE: 'delete-department',
+  },
 } as const;
 
 export const DEFAULT_PORTS = DEFAULT.PORTS;

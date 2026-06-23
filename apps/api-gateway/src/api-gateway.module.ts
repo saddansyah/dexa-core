@@ -8,6 +8,7 @@ import { AuthController } from './controllers/auth.controller';
 import { FileController } from './controllers/file.controller';
 import { AttendanceController } from './controllers/attendance.controller';
 import { EmployeeController } from './controllers/employee.controller';
+import { DepartmentController } from './controllers/department.controller';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
@@ -80,6 +81,7 @@ import { JwtModule } from '@nestjs/jwt';
     FileController,
     AttendanceController,
     EmployeeController,
+    DepartmentController,
   ],
   providers: [ApiGatewayService],
 })

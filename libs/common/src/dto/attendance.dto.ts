@@ -25,8 +25,8 @@ export class UpdateAttendanceDto extends createZodDto(UpdateAttendanceSchema) { 
 
 export const GetAttendancesSchema = z.object({
   employeeId: z.uuidv7().optional().describe("Filter by employee ID"),
-  startDate: z.iso.date().optional().describe("Start date filter (YYYY-MM-DD)"),
-  endDate: z.iso.date().optional().describe("End date filter (YYYY-MM-DD)"),
+  startDate: z.iso.datetime().optional().describe("Start date filter in ISO 8601"),
+  endDate: z.iso.datetime().optional().describe("End date filter in ISO 8601"),
   status: z.enum(["present", "late", "absent", "incomplete"]).optional().describe("Filter by status"),
   limit: z.coerce.number().min(1).max(100).optional().default(10).describe("Max records to return per page"),
   page: z.coerce.number().min(1).optional().default(1).describe("Page number (1-indexed)"),

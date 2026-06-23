@@ -10,11 +10,11 @@ export class AttendanceSvcController {
   constructor(private readonly attendanceSvcService: AttendanceSvcService) { }
 
   @MessagePattern({ cmd: COMMANDS.ATTENDANCE.GET_ALL })
-  async handleGetAttendances(@Payload() data: GetAttendancesDto) {
-    this.logger.log(`Received get attendances message with filters: ${JSON.stringify(data)}`);
-    const result = await this.attendanceSvcService.getAll(data);
+  async handleGetAttendances(@Payload() filters: GetAttendancesDto) {
+    this.logger.log(`Received get attendances message with filters: ${JSON.stringify(filters)}`);
+    const { data, meta } = await this.attendanceSvcService.getAll(filters);
     return {
-      data: result,
+      data, meta
     };
   }
 

@@ -1,9 +1,9 @@
 import { Inject, Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { DRIZZLE_MODULE_PROVIDER, employees, users } from '@app/database';
+import { DRIZZLE_MODULE_PROVIDER, employees, users, departments } from '@app/database';
 import { MySql2Database } from 'drizzle-orm/mysql2';
 import * as dbSchema from '@app/database';
 import { eq, and, desc, count, or } from 'drizzle-orm';
-import { CreateEmployeeDto, UpdateEmployeeDto, GetEmployeesDto, hashPassword } from '@app/common';
+import { CreateEmployeeDto, UpdateEmployeeDto, GetEmployeesDto, hashPassword, CreateDepartmentDto, UpdateDepartmentDto, GetDepartmentsDto } from '@app/common';
 import { v7 as uuidv7 } from 'uuid';
 
 @Injectable()
@@ -242,6 +242,78 @@ export class EmployeeSvcService {
 
     await this.db.delete(users).where(eq(users.id, employee.user.id));
 
+    return { success: true };
+  }
+
+  async getAllDepartments(filters?: GetDepartmentsDto) {
+    const page = filters?.page ?? 1;
+    const limit = filters?.limit ?? 10;
+    const offset = (page - 1) * limit;
+
+    const [countResult] = await this.db
+      .select({ value: count() })
+      .from(departments);
+    const total = countResult?.value ?? 0;
+
+    const departmentsList = await this.db
+      .select()
+      .from(departments)
+      .orderBy(desc(departments.id))
+      .limit(limit)
+      .offset(offset);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data: departmentsList,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages,
+      },
+    };
+  }
+
+  async getDepartmentById(id: number) {
+    const result = await this.db
+      .select()
+      .from(departments)
+      .where(eq(departments.id, id))
+      .limit(1);
+
+    if (!result[0]) {
+      throw new NotFoundException('Department not found');
+    }
+    return result[0];
+  }
+
+  async createDepartment(data: CreateDepartmentDto) {
+    const [insertResult] = await this.db.insert(departments).values({
+      name: data.name,
+      description: data.description ?? null,
+    });
+    const insertId = insertResult.insertId;
+    return this.getDepartmentById(insertId);
+  }
+
+  async updateDepartment(id: number, data: UpdateDepartmentDto) {
+    await this.getDepartmentById(id); // Throws if not found
+
+    const updateData: Partial<typeof departments.$inferInsert> = {};
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.description !== undefined) updateData.description = data.description;
+
+    if (Object.keys(updateData).length > 0) {
+      await this.db.update(departments).set(updateData).where(eq(departments.id, id));
+    }
+
+    return this.getDepartmentById(id);
+  }
+
+  async deleteDepartment(id: number) {
+    await this.getDepartmentById(id); // Throws if not found
+    await this.db.delete(departments).where(eq(departments.id, id));
     return { success: true };
   }
 }
