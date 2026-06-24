@@ -212,12 +212,12 @@ export class EmployeeSvcService {
         id: employeeId,
         userId,
         name,
-        dob: new Date(dob),
+        dob,
         departmentId: departmentId ?? null,
         address: address ?? null,
         position: position ?? null,
         status: status ?? 'contract',
-        joinDate: joinDate ? new Date(joinDate) : new Date(),
+        joinDate: joinDate ?? new Date().toISOString().split('T')[0],
       });
     });
 
@@ -240,12 +240,12 @@ export class EmployeeSvcService {
       const employeeUpdateData: Partial<typeof employees.$inferInsert> = {};
       if (name !== undefined) employeeUpdateData.name = name;
       if (address !== undefined) employeeUpdateData.address = address;
-      if (dob !== undefined) employeeUpdateData.dob = dob ? new Date(dob) : undefined;
+      if (dob !== undefined) employeeUpdateData.dob = dob;
       if (position !== undefined) employeeUpdateData.position = position;
       if (status !== undefined) employeeUpdateData.status = status;
       if (departmentId !== undefined) employeeUpdateData.departmentId = departmentId;
-      if (joinDate !== undefined) employeeUpdateData.joinDate = joinDate ? new Date(joinDate) : undefined;
-      if (resignDate !== undefined) employeeUpdateData.resignDate = resignDate ? new Date(resignDate) : null;
+      if (joinDate !== undefined) employeeUpdateData.joinDate = joinDate;
+      if (resignDate !== undefined) employeeUpdateData.resignDate = resignDate ?? null;
 
       if (Object.keys(employeeUpdateData).length > 0) {
         await tx.update(employees).set(employeeUpdateData).where(eq(employees.id, id));

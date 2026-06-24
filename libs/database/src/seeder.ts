@@ -74,9 +74,9 @@ async function main() {
     userId: hrUserId,
     name: 'Tiffany',
     address: 'Cakung, Jakarta',
-    dob: new Date('1990-05-15'),
+    dob: '1990-05-15',
     position: 'HR Specialist',
-    joinDate: new Date('2024-01-15'),
+    joinDate: '2024-01-15',
     status: 'permanent',
   });
 
@@ -94,9 +94,9 @@ async function main() {
     userId: emp1UserId,
     name: 'Kazhim',
     address: 'Kalibawang, Kulonprogo',
-    dob: new Date('1995-08-20'),
+    dob: '1995-08-20',
     position: 'Tech Lead',
-    joinDate: new Date('2023-06-01'),
+    joinDate: '2023-06-01',
     status: 'permanent',
   });
 
@@ -114,9 +114,9 @@ async function main() {
     userId: emp2UserId,
     name: 'Saddan Syah Akbar',
     address: 'Kutoarjo, Purworejo',
-    dob: new Date('2002-11-12'),
+    dob: '2002-11-12',
     position: 'Software Engineer',
-    joinDate: new Date('2024-03-01'),
+    joinDate: '2024-03-01',
     status: 'contract',
   });
 
@@ -134,9 +134,9 @@ async function main() {
     userId: emp3UserId,
     name: 'Zulfan',
     address: 'Kembaran, Banyumas',
-    dob: new Date('2005-05-05'),
+    dob: '2005-05-05',
     position: 'Software Engineer Intern',
-    joinDate: new Date('2026-05-01'),
+    joinDate: '2026-05-01',
     status: 'intern',
   });
 
@@ -173,7 +173,7 @@ async function main() {
 
       attendanceRecords.push({
         employeeId,
-        attendanceDate: dateVal,
+        attendanceDate: dateStr,
         clockInTime,
         clockInPhoto: clockInTime ? `https://jollycontrarian.com/images/6/6c/Rickroll.jpg` : null,
         clockOutTime,
