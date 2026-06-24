@@ -109,5 +109,10 @@ export class EmployeeSvcController {
       data: result,
     };
   }
+
+  @MessagePattern({ cmd: 'ping' })
+  handlePing() {
+    return { status: 'ok' };
+  }
 }
 

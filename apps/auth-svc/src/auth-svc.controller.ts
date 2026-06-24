@@ -90,4 +90,9 @@ export class AuthSvcController {
       data: result,
     };
   }
+
+  @MessagePattern({ cmd: 'ping' })
+  handlePing() {
+    return { status: 'ok' };
+  }
 }

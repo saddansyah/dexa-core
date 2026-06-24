@@ -15,6 +15,98 @@ services:
     networks:
       - dexa-network
 
+  api-gateway:
+    build: .
+    container_name: dexa-api-gateway
+    restart: always
+    command: npm run start:gateway
+    ports:
+      - '9000:9000'
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=mysql://root:dexa@db:3306/dexa_db
+      - AUTH_HOST=auth-svc
+      - FILE_HOST=file-svc
+      - ATTENDANCE_HOST=attendance-svc
+      - EMPLOYEE_HOST=employee-svc
+    depends_on:
+      - db
+      - auth-svc
+      - file-svc
+      - attendance-svc
+      - employee-svc
+    networks:
+      - dexa-network
+
+  auth-svc:
+    build: .
+    container_name: dexa-auth-svc
+    restart: always
+    command: npm run start:auth
+    ports:
+      - '9001:9001'
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=mysql://root:dexa@db:3306/dexa_db
+      - AUTH_HOST=0.0.0.0
+    depends_on:
+      - db
+    networks:
+      - dexa-network
+
+  file-svc:
+    build: .
+    container_name: dexa-file-svc
+    restart: always
+    command: npm run start:file
+    ports:
+      - '9002:9002'
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=mysql://root:dexa@db:3306/dexa_db
+      - FILE_HOST=0.0.0.0
+    depends_on:
+      - db
+    networks:
+      - dexa-network
+
+  attendance-svc:
+    build: .
+    container_name: dexa-attendance-svc
+    restart: always
+    command: npm run start:attendance
+    ports:
+      - '9003:9003'
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=mysql://root:dexa@db:3306/dexa_db
+      - ATTENDANCE_HOST=0.0.0.0
+    depends_on:
+      - db
+    networks:
+      - dexa-network
+
+  employee-svc:
+    build: .
+    container_name: dexa-employee-svc
+    restart: always
+    command: npm run start:employee
+    ports:
+      - '9004:9004'
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=mysql://root:dexa@db:3306/dexa_db
+      - EMPLOYEE_HOST=0.0.0.0
+    depends_on:
+      - db
+    networks:
+      - dexa-network
+
 volumes:
   dexa-db-data:
     name: dexa-db-data

@@ -32,4 +32,9 @@ export class FileSvcController {
     );
     return { url };
   }
+
+  @MessagePattern({ cmd: 'ping' })
+  handlePing() {
+    return { status: 'ok' };
+  }
 }

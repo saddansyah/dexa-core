@@ -1,77 +1,73 @@
 Table roles {
-  id integer [primary key]
-  name varchar(100)
-  created_at timestamp [default: `now()`]
-  updated_at timestamp [default: `now()`]
-}
-
-enum attendance_status {
-  present
-  late
-  absent
-  incomplete
-}
-
-Table attendances {
-  id uuid [primary key]
-  employee_id uuid
-  attendance_date date [not null] // to prevent duplicated attendance on same day
-  clock_in_time timestamp 
-  clock_in_photo varchar(255)
-  clock_out_time timestamp
-  clock_out_photo varchar(255)
-  status attendance_status
-  created_at timestamp [default: `now()`]
-  updated_at timestamp [default: `now()`]
-
-  indexes {
-    (employee_id, attendance_date) [unique]
-  }
-}
-
-Table users {
-  id uuid [primary key]
-  role_id integer
-  email varchar [unique, not null]
-  password varchar [not null, note: "hashed string"]
+  id varchar(50) [primary key]
+  name varchar(100) [not null]
   created_at timestamp [default: `now()`]
   updated_at timestamp [default: `now()`]
 }
 
 Table departments {
-  id integer [primary key]
+  id integer [primary key, increment]
   name varchar(100) [not null]
-  description varchar
+  description varchar(255)
   created_at timestamp [default: `now()`]
   updated_at timestamp [default: `now()`]
 }
 
-enum employment_status {
+enum employee_status {
   permanent
   contract
   intern
 }
 
-
 Table employees {
-  id uuid [primary key]
-  department_id integer
-  user_id uuid
-  
-  name varchar 
-  address varchar
+  id varchar(36) [primary key]
+  department_id bigint
+  user_id varchar(36)
+  name varchar(255)
+  address varchar(255)
   dob date [not null]
-  gender varchar
-  position varchar
+  position varchar(255)
   join_date date [not null]
-  resign_date date [null]
-  status employment_status
+  resign_date date
+  status employee_status
   created_at timestamp [default: `now()`]
   updated_at timestamp [default: `now()`]
 }
 
+Table users {
+  id varchar(36) [primary key]
+  role_id varchar(50) [not null]
+  email varchar(255) [unique, not null]
+  password varchar(255) [not null]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+}
+
+Table refresh_tokens {
+  id varchar(36) [primary key]
+  user_id varchar(36)
+  token varchar(500) [unique, not null]
+  expires_at timestamp [not null]
+  created_at timestamp [default: `now()`]
+}
+
+Table attendances {
+  employee_id varchar(36)
+  attendance_date date [not null]
+  clock_in_time timestamp
+  clock_in_photo varchar(255)
+  clock_out_time timestamp
+  clock_out_photo varchar(255)
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+
+  indexes {
+    (employee_id, attendance_date) [pk]
+  }
+}
+
 Ref user_roles: users.role_id > roles.id
 Ref employee_departments: employees.department_id > departments.id
-Ref employee_attendances: attendances.employee_id > employees.id
 Ref employee_users: employees.user_id - users.id
-
+Ref refresh_tokens_users: refresh_tokens.user_id > users.id
+Ref employee_attendances: attendances.employee_id > employees.id
