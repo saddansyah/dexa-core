@@ -54,3 +54,11 @@ export const ServiceGetPresignedUrlSchema = z.object({
 });
 
 export class ServiceGetPresignedUrlDto extends createZodDto(ServiceGetPresignedUrlSchema) { }
+
+export const FileUploadResponseSchema = z.object({
+  key: z.string().describe('The key of the uploaded file'),
+  url: z.string().describe('The public/accessible URL of the uploaded file'),
+});
+
+export class FileUploadResponseDto extends createZodDto(FileUploadResponseSchema) {}
+

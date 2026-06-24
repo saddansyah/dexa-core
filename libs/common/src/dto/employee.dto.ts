@@ -50,3 +50,20 @@ export const GetEmployeesSchema = z.object({
 });
 
 export class GetEmployeesDto extends createZodDto(GetEmployeesSchema) { }
+
+export const EmployeeResponseSchema = z.object({
+  id: z.string().describe('The unique UUID v7 identifier of the employee'),
+  departmentId: z.number().nullable().optional().describe('The department ID assigned to this employee'),
+  userId: z.string().describe('The associated user ID'),
+  name: z.string().describe('Full name of the employee'),
+  address: z.string().nullable().optional().describe('Residential address of the employee'),
+  dob: z.string().describe('Date of birth'),
+  position: z.string().nullable().optional().describe('Job title or position'),
+  status: z.enum(['permanent', 'contract', 'intern']).describe('Employment status/type of contract'),
+  joinDate: z.string().describe('Join date'),
+  resignDate: z.string().nullable().optional().describe('Resignation date if applicable'),
+  createdAt: z.string().describe('Creation timestamp'),
+  updatedAt: z.string().describe('Last updated timestamp'),
+});
+
+export class EmployeeResponseDto extends createZodDto(EmployeeResponseSchema) {}

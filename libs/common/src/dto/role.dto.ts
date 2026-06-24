@@ -19,3 +19,11 @@ export const GetRoleByIdSchema = z.object({
 });
 
 export class GetRoleByIdDto extends createZodDto(GetRoleByIdSchema) {}
+
+export const RoleResponseSchema = z.object({
+  id: z.string().describe('Unique role slug/ID'),
+  name: z.string().describe('Display name of the role'),
+});
+
+export class RoleResponseDto extends createZodDto(RoleResponseSchema) {}
+

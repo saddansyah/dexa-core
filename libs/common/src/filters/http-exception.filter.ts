@@ -1,4 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost, Logger } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, Logger, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { formatException } from '../errors';
 
@@ -15,6 +15,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message: formatted.message,
       error: formatted.error,
     });
+
+    if (Number(formatted.status) >= 500) {
+      formatted.message = 'Internal Server Error';
+      formatted.error = null;
+    }
 
     return response.status(formatted.status).json(formatted);
   }

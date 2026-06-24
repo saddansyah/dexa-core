@@ -19,6 +19,8 @@ import {
   CurrentUser,
   JwtPayloadDto,
   STORAGE_FOLDERS,
+  ApiCreatedResponseStandard,
+  FileUploadResponseDto,
 } from '@app/common';
 import * as path from 'path';
 
@@ -45,6 +47,7 @@ export class FileController {
       },
     },
   })
+  @ApiCreatedResponseStandard(FileUploadResponseDto)
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(
     @UploadedFile(

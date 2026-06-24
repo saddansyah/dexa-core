@@ -24,3 +24,14 @@ export const GetDepartmentsSchema = z.object({
 });
 
 export class GetDepartmentsDto extends createZodDto(GetDepartmentsSchema) {}
+
+export const DepartmentResponseSchema = z.object({
+  id: z.number().describe('The unique auto-incrementing ID of the department'),
+  name: z.string().describe('The name of the department'),
+  description: z.string().nullable().optional().describe('The optional description of the department'),
+  createdAt: z.string().describe('Creation timestamp'),
+  updatedAt: z.string().describe('Last updated timestamp'),
+});
+
+export class DepartmentResponseDto extends createZodDto(DepartmentResponseSchema) {}
+

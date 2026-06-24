@@ -1,7 +1,28 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Inject, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiTags, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
-import { SERVICES, COMMANDS, LoginDto, RegisterDto, CreateRoleDto, UpdateRoleDto, GetRoleByIdDto, AuthGuard, RolesGuard, Roles, RefreshTokenBodyDto, CurrentUser, JwtPayloadDto } from '@app/common';
+import { ApiTags, ApiOperation, ApiParam } from '@nestjs/swagger';
+import {
+  SERVICES,
+  COMMANDS,
+  LoginDto,
+  RegisterDto,
+  CreateRoleDto,
+  UpdateRoleDto,
+  GetRoleByIdDto,
+  AuthGuard,
+  RolesGuard,
+  Roles,
+  RefreshTokenBodyDto,
+  CurrentUser,
+  JwtPayloadDto,
+  ApiOkResponseStandard,
+  ApiOkResponseStandardArray,
+  ApiCreatedResponseStandard,
+  LoginResponseDto,
+  RegisterResponseDto,
+  SuccessResponseDto,
+  RoleResponseDto,
+} from '@app/common';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -14,7 +35,7 @@ export class AuthController {
   @Post('register')
   @Roles(['admin'])
   @ApiOperation({ summary: 'Register a new user/employee (Admin only)' })
-  @ApiResponse({ status: 201, description: 'Successfully registered user' })
+  @ApiCreatedResponseStandard(RegisterResponseDto)
   register(@Body() data: RegisterDto) {
     return this.authClient.send({ cmd: COMMANDS.AUTH.REGISTER }, data);
   }
@@ -22,7 +43,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @ApiOperation({ summary: 'User login' })
-  @ApiResponse({ status: 200, description: 'Successfully logged in' })
+  @ApiOkResponseStandard(LoginResponseDto)
   login(@Body() data: LoginDto) {
     return this.authClient.send({ cmd: COMMANDS.AUTH.LOGIN }, data);
   }
@@ -30,7 +51,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
   @ApiOperation({ summary: 'Refresh authentication token' })
-  @ApiResponse({ status: 200, description: 'Successfully refreshed token' })
+  @ApiOkResponseStandard(LoginResponseDto)
   refresh(@Body() data: RefreshTokenBodyDto) {
     return this.authClient.send({ cmd: COMMANDS.AUTH.REFRESH_TOKEN }, data);
   }
@@ -38,7 +59,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('logout')
   @ApiOperation({ summary: 'User logout' })
-  @ApiResponse({ status: 200, description: 'Successfully logged out' })
+  @ApiOkResponseStandard(SuccessResponseDto)
   logout(@Body() data: RefreshTokenBodyDto) {
     return this.authClient.send({ cmd: COMMANDS.AUTH.LOGOUT }, data);
   }
@@ -47,7 +68,7 @@ export class AuthController {
   @Post('logout-all')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Logout from all devices' })
-  @ApiResponse({ status: 200, description: 'Successfully logged out from all devices' })
+  @ApiOkResponseStandard(SuccessResponseDto)
   logoutAll(@CurrentUser() user: JwtPayloadDto) {
     return this.authClient.send({ cmd: COMMANDS.AUTH.LOGOUT_ALL }, { userId: user.sub });
   }
@@ -56,24 +77,26 @@ export class AuthController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(['admin'])
   @ApiOperation({ summary: 'Create a new role (Admin only)' })
-  @ApiResponse({ status: 201, description: 'Successfully created role' })
+  @ApiCreatedResponseStandard(RoleResponseDto)
   createRole(@Body() data: CreateRoleDto) {
     return this.authClient.send({ cmd: COMMANDS.AUTH.CREATE_ROLE }, data);
   }
 
   @Get('roles')
   @UseGuards(AuthGuard, RolesGuard)
+  @Roles(['admin'])
   @ApiOperation({ summary: 'Get all roles (Admin only)' })
-  @ApiResponse({ status: 200, description: 'Successfully retrieved all roles' })
+  @ApiOkResponseStandardArray(RoleResponseDto)
   getRoles() {
     return this.authClient.send({ cmd: COMMANDS.AUTH.GET_ROLES }, {});
   }
 
   @Get('roles/:id')
   @UseGuards(AuthGuard, RolesGuard)
+  @Roles(['admin'])
   @ApiOperation({ summary: 'Get role details by ID (Admin only)' })
   @ApiParam({ name: 'id', type: 'string', description: 'Unique ID of the role' })
-  @ApiResponse({ status: 200, description: 'Successfully retrieved role details' })
+  @ApiOkResponseStandard(RoleResponseDto)
   getRoleById(@Param() params: GetRoleByIdDto) {
     return this.authClient.send({ cmd: COMMANDS.AUTH.GET_ROLE_BY_ID }, { id: params.id });
   }
@@ -83,7 +106,7 @@ export class AuthController {
   @Roles(['admin'])
   @ApiOperation({ summary: 'Update role by ID (Admin only)' })
   @ApiParam({ name: 'id', type: 'string', description: 'Unique ID of the role' })
-  @ApiResponse({ status: 200, description: 'Successfully updated role' })
+  @ApiOkResponseStandard(RoleResponseDto)
   updateRole(@Param() params: GetRoleByIdDto, @Body() data: UpdateRoleDto) {
     return this.authClient.send({ cmd: COMMANDS.AUTH.UPDATE_ROLE }, { id: params.id, name: data.name });
   }
@@ -93,7 +116,7 @@ export class AuthController {
   @Roles(['admin'])
   @ApiOperation({ summary: 'Delete role by ID (Admin only)' })
   @ApiParam({ name: 'id', type: 'string', description: 'Unique ID of the role' })
-  @ApiResponse({ status: 200, description: 'Successfully deleted role' })
+  @ApiOkResponseStandard(SuccessResponseDto)
   deleteRole(@Param() params: GetRoleByIdDto) {
     return this.authClient.send({ cmd: COMMANDS.AUTH.DELETE_ROLE }, { id: params.id });
   }

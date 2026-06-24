@@ -49,3 +49,25 @@ export const JwtPayloadSchema = z.object({
 })
 
 export class JwtPayloadDto extends createZodDto(JwtPayloadSchema) { }
+
+export const LoginResponseSchema = z.object({
+  access_token: z.string().describe('JWT access token used for authorization'),
+  refresh_token: z.string().describe('JWT refresh token used to generate new access tokens'),
+});
+
+export class LoginResponseDto extends createZodDto(LoginResponseSchema) { }
+
+export const RegisterResponseSchema = z.object({
+  userId: z.string().describe('The unique identifier of the registered user'),
+  employeeId: z.string().describe('The unique identifier of the registered employee'),
+  email: z.string().describe('The registered email address'),
+  name: z.string().describe('The full name of the employee'),
+});
+
+export class RegisterResponseDto extends createZodDto(RegisterResponseSchema) { }
+
+export const SuccessResponseSchema = z.object({
+  success: z.boolean().describe('Indicates whether the operation was successful'),
+});
+
+export class SuccessResponseDto extends createZodDto(SuccessResponseSchema) { }

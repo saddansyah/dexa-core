@@ -49,3 +49,17 @@ export const ClockOutSchema = z.object({
 });
 
 export class ClockOutDto extends createZodDto(ClockOutSchema) { }
+
+export const AttendanceResponseSchema = z.object({
+  employeeId: z.string().describe('Unique ID of the employee'),
+  attendanceDate: z.string().describe('Date of attendance (YYYY-MM-DD)'),
+  clockInTime: z.string().nullable().optional().describe('Clock-in timestamp in ISO format'),
+  clockInPhoto: z.string().nullable().optional().describe('URL or path to clock-in photo'),
+  clockOutTime: z.string().nullable().optional().describe('Clock-out timestamp in ISO format'),
+  clockOutPhoto: z.string().nullable().optional().describe('URL or path to clock-out photo'),
+  createdAt: z.string().describe('Creation timestamp'),
+  updatedAt: z.string().describe('Last updated timestamp'),
+});
+
+export class AttendanceResponseDto extends createZodDto(AttendanceResponseSchema) {}
+
