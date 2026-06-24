@@ -22,10 +22,10 @@ export const employees = mysqlTable('employees', {
   userId: varchar('user_id', { length: 36 }).references(() => users.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 255 }),
   address: varchar('address', { length: 255 }),
-  dob: date('dob').notNull(),
+  dob: date('dob', { mode: 'string' }).notNull(),
   position: varchar('position', { length: 255 }),
-  joinDate: date('join_date').notNull(),
-  resignDate: date('resign_date'),
+  joinDate: date('join_date', { mode: 'string' }).notNull(),
+  resignDate: date('resign_date', { mode: 'string' }),
   status: mysqlEnum('status', ['permanent', 'contract', 'intern']),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
@@ -50,7 +50,7 @@ export const refreshTokens = mysqlTable('refresh_tokens', {
 
 export const attendances = mysqlTable('attendances', {
   employeeId: varchar('employee_id', { length: 36 }).references(() => employees.id, { onDelete: 'restrict' }),
-  attendanceDate: date('attendance_date').notNull(),
+  attendanceDate: date('attendance_date', { mode: 'string' }).notNull(),
   clockInTime: timestamp('clock_in_time'),
   clockInPhoto: varchar('clock_in_photo', { length: 255 }),
   clockOutTime: timestamp('clock_out_time'),
