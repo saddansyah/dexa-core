@@ -45,12 +45,12 @@ export class AuthSvcService {
         id: employeeId,
         userId,
         name,
-        dob: new Date(dob),
+        dob: dob.toISOString().split('T')[0],
         departmentId: departmentId ?? null,
         address: address ?? null,
         position: position ?? null,
         status: status ?? 'contract',
-        joinDate: new Date(),
+        joinDate: new Date().toISOString().split('T')[0],
       });
     });
 
