@@ -84,7 +84,7 @@ export class AuthController {
 
   @Get('roles')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(['admin'])
+  @Roles(['admin', 'hr'])
   @ApiOperation({ summary: 'Get all roles (Admin only)' })
   @ApiOkResponseStandardArray(RoleResponseDto)
   getRoles() {
@@ -93,7 +93,7 @@ export class AuthController {
 
   @Get('roles/:id')
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(['admin'])
+  @Roles(['admin', 'hr'])
   @ApiOperation({ summary: 'Get role details by ID (Admin only)' })
   @ApiParam({ name: 'id', type: 'string', description: 'Unique ID of the role' })
   @ApiOkResponseStandard(RoleResponseDto)
