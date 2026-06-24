@@ -25,7 +25,7 @@ The system is structured as a NestJS monorepo with an **API Gateway** and four d
 
 | Service Name | Protocol & Port | Key Responsibilities & Features | Dependencies / Integration |
 | :--- | :--- | :--- | :--- |
-| **API Gateway** (`api-gateway`) | HTTP `9000` | • Single client entry point with CORS enabled<br>• Request routing, global exception filters, and interceptors<br>• Exposes interactive Swagger UI documentation at `/api/docs` | Internal microservices via TCP |
+| **API Gateway** (`api-gateway`) | HTTP `9000` | • Single client entry point with CORS enabled<br>• Request routing, global exception filters, and interceptors<br>• Exposes interactive Swagger UI documentation at `/api/docs`<br>• Exposes a health check endpoint at `/health` to monitor the status of the gateway and all connected microservices | Internal microservices via TCP |
 | **Auth Service** (`auth-svc`) | TCP `9001` | • Stateless JWT authentication (access & refresh tokens)<br>• Role-Based Access Control (RBAC) supporting `admin`, `hr`, and `employee`<br>• Secure token refresh flow and blacklist/delete token on logout | MySQL (`users`, `roles`, `refresh_tokens`) |
 | **File Service** (`file-svc`) | TCP `9002` | • Interacts with S3-compatible cloud object storage<br>• Handles asset uploads (e.g., attendance photos) and presigned URLs | S3 Compatible Storage (Cloudflare R2 / MinIO) |
 | **Attendance Service** (`attendance-svc`) | TCP `9003` | • Records daily check-ins and check-outs with photos<br>• Validates work shift rules under timezone settings (`Asia/Jakarta`) | MySQL (`attendances`) |

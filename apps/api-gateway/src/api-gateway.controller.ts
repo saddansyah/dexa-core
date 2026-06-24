@@ -17,11 +17,6 @@ export class ApiGatewayController {
     @Inject(SERVICES.EMPLOYEE) private readonly employeeClient: ClientProxy,
   ) { }
 
-  @Get()
-  getHello(): string {
-    return this.apiGatewayService.getHello();
-  }
-
   @Get('health')
   @ApiOperation({ summary: 'Simple health check for gateway and all microservices' })
   @ApiResponse({ status: 200, description: 'Health check response' })
